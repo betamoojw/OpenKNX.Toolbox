@@ -15,6 +15,67 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="600" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
 
+        
+        <StackPanel Margin="10">
+            <TextBlock Text="Release hinzufügen" FontSize="20" />
+
+            <TextBlock Text="Repository" Margin="0 10 0 0" />
+            <ComboBox ItemsSource="{Binding Repos}" SelectedItem="{Binding SelectedRepository}" IsEnabled="{Binding CanSelectRepo}" HorizontalAlignment="Stretch" />
+            
+            <TextBlock Text="Release" Margin="0 10 0 0" />
+            <ComboBox ItemsSource="{Binding SelectedRepository.Releases}" SelectedItem="{Binding SelectedRelease}" IsEnabled="{Binding CanSelectRelease}" HorizontalAlignment="Stretch" />
+            
+            <Grid Margin="0 5 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Button Command="{Binding UpdateRepos}" Content="Aktualisieren" IsEnabled="{Binding CanUpdate}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="0 0 5 0" />
+                <Button Grid.Column="1" Command="{Binding DownloadRelease}" IsEnabled="{Binding CanDownload}" Content="Herunterladen" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" />
+                <Button Grid.Column="2" Content="Zip importieren" IsEnabled="{Binding CanUpdate}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="5 0 0 0" />
+            </Grid>
+            <CheckBox Content="Pre-Releases anzeigen nach Aktualisieren" IsChecked="{Binding ShowPrereleases}" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Margin="10">
+            <TextBlock Text="Lokale Releases" FontSize="20" />
+
+            <ScrollViewer>
+                <ItemsRepeater ItemsSource="{Binding LocalReleases}" >
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="0,10,0,0" CornerRadius="3" BorderBrush="LighTGray" BorderThickness="1" Padding="5">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding RepositoryName}" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding ReleaseName}" />
+                                        <TextBlock Text="{Binding Published}" />
+                                    </StackPanel>
+
+                                    <ListBox Grid.Column="1" ItemsSource="{Binding Products}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </ScrollViewer>
+        </StackPanel>
+    </Grid>
 </Window>
