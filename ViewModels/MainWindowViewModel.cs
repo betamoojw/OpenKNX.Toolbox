@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace OpenKNX.Toolkit.ViewModels;
@@ -44,7 +45,7 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         set { 
             _selectedRelease = value;
             NotifyPropertyChanged("SelectedRelease");
-            NotifyPropertyChanged("CanDownload");
+            NotifyPropertyChanged("CanDownloadRelease");
         }
     }
 
@@ -53,12 +54,12 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         get { return _selectedRepository != null && !_isDownloading && !_isUpdating; }
     }
 
-    public bool CanDownload
+    public bool CanDownloadRelease
     {
         get { return _selectedRelease != null && !_isDownloading && !_isUpdating; }
     }
 
-    public bool CanUpdate
+    public bool CanUpdateRepos
     {
         get { return !_isUpdating && !_isDownloading; }
     }
@@ -71,8 +72,8 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             _isDownloading = value;
             NotifyPropertyChanged("CanSelectRepo");
             NotifyPropertyChanged("CanSelectRelease");
-            NotifyPropertyChanged("CanDownload");
-            NotifyPropertyChanged("CanUpdate");
+            NotifyPropertyChanged("CanUpdateRepos");
+            NotifyPropertyChanged("CanDownloadRelease");
         }
     }
 
@@ -84,8 +85,8 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             _isUpdating = value;
             NotifyPropertyChanged("CanSelectRepo");
             NotifyPropertyChanged("CanSelectRelease");
-            NotifyPropertyChanged("CanDownload");
-            NotifyPropertyChanged("CanUpdate");
+            NotifyPropertyChanged("CanUpdateRepos");
+            NotifyPropertyChanged("CanDownloadRelease");
         }
     }
 
@@ -96,6 +97,18 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         set {
             _showPrereleases = value;
             NotifyPropertyChanged("ShowPrereleases");
+        }
+    }
+
+    private Product? _selectedProduct { get; set; }
+    public Product? SelectedProduct
+    {
+        get { return _selectedProduct; }
+        set { 
+            if(value == null) return;
+            _selectedProduct = value;
+            NotifyPropertyChanged("SelectedProduct");
+            Console.WriteLine("changed");
         }
     }
 
@@ -124,13 +137,14 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                     continue;
                 cache = File.ReadAllText(Path.Combine(folder, "cache.json"));
                 var model = Newtonsoft.Json.JsonConvert.DeserializeObject<ReleaseContentModel>(cache);
+                foreach(Product prod in model.Products)
+                    prod.ReleaseContent = model;
                 LocalReleases.Add(model);
                 //LocalReleases.Sort((a, b) => a.RepositoryName.ComareTo(b.RepositoryName));
             }
         }
     }
 
-    [RelayCommand]
     public async Task DownloadRelease()
     {
         System.Console.WriteLine("Downloading Release: " + SelectedRelease.Name);
@@ -166,6 +180,8 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             content.ReleaseName = SelectedRelease.Name;
             content.IsPrerelease = SelectedRelease.IsPrerelease;
             content.Published = SelectedRelease.Published;
+            content.Version = $"v{SelectedRelease.Major}.{SelectedRelease.Minor}.{SelectedRelease.Build}";
+            
             File.WriteAllText(Path.Combine(targetFolder, "cache.json"), Newtonsoft.Json.JsonConvert.SerializeObject(content));
             LocalReleases.Add(content);
             //LocalReleases.Sort((a, b) => a.RepositoryName.ComareTo(b.RepositoryName));
@@ -177,7 +193,6 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         IsDownloading = false;
     }
 
-    [RelayCommand]
     public async Task UpdateRepos()
     {
         System.Console.WriteLine("Updating Repos");
