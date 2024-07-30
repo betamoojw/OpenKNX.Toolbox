@@ -68,6 +68,10 @@
         <TextBlock Grid.Row="3" Text="Release aufspielen" FontSize="20" Margin="10 0 0 0" />
 
         <TextBlock Grid.Row="5" Text="KnxProd erstellen" FontSize="20" Margin="10 10 0 0" />
+        <StackPanel Grid.Row="6" Margin="10 0 0 10">
+            <TextBlock Text="Hier kommt der Pfad hin" />
+            <Button Command="{Binding CreateKnxProd}" Content="Jetzt erstellen" IsEnabled="{Binding CanStep2}" />
+        </StackPanel>
         
         <TextBlock Grid.Column="1" Text="Lokale Releases" FontSize="20" />
         <ScrollViewer Grid.Column="1" Grid.Row="1" Grid.RowSpan="6" VerticalAlignment="Stretch" Margin="10">

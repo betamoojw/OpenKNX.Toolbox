@@ -27,5 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OpenKNX.Toolbox.Lib\OpenKNX.Toolbox.Lib.csproj" />
+    <ProjectReference Include="..\OpenKNX.Toolbox.Sign\OpenKNX.Toolbox.Sign.csproj" />
   </ItemGroup>
 </Project>

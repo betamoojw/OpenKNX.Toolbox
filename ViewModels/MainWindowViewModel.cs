@@ -1,4 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OpenKNX.Toolbox.Lib.Data;
 using OpenKNX.Toolbox.Lib.Helper;
@@ -12,6 +16,7 @@ using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace OpenKNX.Toolkit.ViewModels;
 
@@ -90,6 +95,16 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         }
     }
 
+    private bool _canStep2 = false;
+    public bool CanStep2
+    {
+        get { return _canStep2; }
+        set {
+            _canStep2 = value;
+            NotifyPropertyChanged("CanStep2");
+        }
+    }
+
     private bool _showPrereleases = false;
     public bool ShowPrereleases
     {
@@ -109,6 +124,7 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             _selectedProduct = value;
             NotifyPropertyChanged("SelectedProduct");
             Console.WriteLine("changed");
+            CanStep2 = true;
         }
     }
 
@@ -147,7 +163,7 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
 
     public async Task DownloadRelease()
     {
-        System.Console.WriteLine("Downloading Release: " + SelectedRelease.Name);
+        System.Console.WriteLine("Downloading Release: " + SelectedRelease?.Name);
         IsDownloading = true;
         string targetPath = "";
         string targetFolder = "";
@@ -209,6 +225,34 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             System.Console.WriteLine("Failed to update Repos: " + ex.Message);
         }
         IsUpdating = false;
+    }
+
+    public async Task CreateKnxProd()
+    {
+        Console.WriteLine("creating knxprod");
+
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
+            desktop.MainWindow?.StorageProvider is not { } provider)
+            throw new NullReferenceException("Missing StorageProvider instance.");
+
+        string defaultName = SelectedProduct.ReleaseContent.ReleaseName;
+        defaultName = defaultName.Substring(0, defaultName.LastIndexOf('.'));
+
+        var file = await provider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = "Speichere KnxProd",
+            SuggestedFileName = defaultName,
+            FileTypeChoices = new[] { new FilePickerFileType("Knx Produkt Datenbank")
+            {
+                Patterns = new[] { "*.knxprod" }
+            }}
+        });
+
+        if (file is not null)
+        {
+            string outpuFolder = Path.Combine(GetStoragePath(), "Temp");
+            OpenKNX.Toolbox.Sign.SignHelper.SignXml(SelectedProduct.ReleaseContent.XmlFile, outpuFolder);
+        }
     }
 
     private string GetStoragePath()
