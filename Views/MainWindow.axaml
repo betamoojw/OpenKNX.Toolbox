@@ -18,15 +18,13 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="600" />
+            <ColumnDefinition Width="400" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
@@ -43,36 +41,45 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
                 <Button Command="{Binding UpdateRepos}" Content="Aktualisieren" IsEnabled="{Binding CanUpdateRepos}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="0 0 5 0" />
                 <Button Grid.Column="1" Command="{Binding DownloadRelease}" IsEnabled="{Binding CanDownloadRelease}" Content="Herunterladen" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" />
-                <Button Grid.Column="2" Content="Zip importieren" IsEnabled="{Binding CanUpdateRepos}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="5 0 0 0" />
-                <Button Grid.Column="3" Content="Browser" IsEnabled="{OnPlatform false, Windows='true'}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="5 0 0 0" />
+                <Button Grid.Row="1" Command="{Binding ImportZip}" Content="Zip importieren" IsEnabled="{Binding CanUpdateRepos}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="0 5 5 0" />
+                <Button Grid.Row="1" Grid.Column="1" Content="Browser" IsEnabled="{OnPlatform false, Windows='true'}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="0 5 0 0" />
             </Grid>
             <CheckBox Content="Pre-Releases anzeigen nach Aktualisieren" IsChecked="{Binding ShowPrereleases}" />
         </StackPanel>
 
+        <Grid Grid.Row="2" Margin="10" VerticalAlignment="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="2" Margin="10" VerticalAlignment="Bottom" >
-            <TextBlock Text="Ausgewählt" FontSize="20" />
-            <StackPanel Orientation="Horizontal">
+            <TextBlock Grid.ColumnSpan="2" Text="Ausgewählt" FontSize="20" />
+            
+            <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
                 <TextBlock Text="{Binding SelectedProduct.ReleaseContent.RepositoryName}" />
                 <TextBlock Text="{Binding SelectedProduct.ReleaseContent.Version}" Margin="5 0 0 0" />
             </StackPanel>
-            <TextBlock Text="{Binding SelectedProduct.Name}" />
-        </StackPanel>
+            <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding SelectedProduct.Name}" />
+
+            <Button Grid.Row="1" Grid.RowSpan="2" Command="{Binding CreateKnxProd}" Content="KnxProd erstellen" IsEnabled="{Binding CanStep2}" Margin="0 0 5 0" />
+        </Grid>
 
         <TextBlock Grid.Row="3" Text="Release aufspielen" FontSize="20" Margin="10 0 0 0" />
+        <TextBlock Grid.Row="4" Text="Hier kommen ganz tolle Einstellungen hin..." Margin="10 0 0 10" />
 
-        <TextBlock Grid.Row="5" Text="KnxProd erstellen" FontSize="20" Margin="10 10 0 0" />
-        <StackPanel Grid.Row="6" Margin="10 0 0 10">
-            <TextBlock Text="Hier kommt der Pfad hin" />
-            <Button Command="{Binding CreateKnxProd}" Content="Jetzt erstellen" IsEnabled="{Binding CanStep2}" />
-        </StackPanel>
-        
         <TextBlock Grid.Column="1" Text="Lokale Releases" FontSize="20" />
         <ScrollViewer Grid.Column="1" Grid.Row="1" Grid.RowSpan="6" VerticalAlignment="Stretch" Margin="10">
             <ItemsRepeater ItemsSource="{Binding LocalReleases}" >
@@ -82,7 +89,9 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
+                                    <ColumnDefinition Width="30" />
                                     <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 
                                 <StackPanel>
@@ -94,7 +103,13 @@
                                     <TextBlock Text="{Binding Published}" />
                                 </StackPanel>
 
-                                <ListBox Grid.Column="1" ItemsSource="{Binding Products}" SelectedItem="{Binding #WindowControl.((vm:MainWindowViewModel)DataContext).SelectedProduct}" />
+                                <ListBox Grid.Column="2" ItemsSource="{Binding Products}" SelectedItem="{Binding #WindowControl.((vm:MainWindowViewModel)DataContext).SelectedProduct}" />
+
+                                <Button Grid.Column="3" Command="{Binding #WindowControl.((vm:MainWindowViewModel)DataContext).DeleteRelease}" CommandParameter="{Binding .}" Width="40" VerticalAlignment="Stretch">
+                                    <Image Width="30" Height="30" Source="/Assets/delete.png" />
+                                </Button>
+
+                                <Image IsVisible="{Binding IsPrerelease}" Margin="5" Grid.Column="1" Source="/Assets/prerelease.png" ToolTip.Tip="Pre-Release" />
                             </Grid>
                         </Border>
                     </DataTemplate>

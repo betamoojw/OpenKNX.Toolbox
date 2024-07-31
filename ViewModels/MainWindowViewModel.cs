@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -227,6 +228,17 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         IsUpdating = false;
     }
 
+    public async Task DeleteRelease(ReleaseContentModel model)
+    {
+        System.Console.WriteLine($"Delete Release {model.RepositoryName} {model.ReleaseName}");
+
+        string name = model.ReleaseName;
+        name = name.Substring(0, name.LastIndexOf('.'));
+        string path = Path.Combine(GetStoragePath(), name);
+        Directory.Delete(path, true);
+        LocalReleases.Remove(model);
+    }
+
     public async Task CreateKnxProd()
     {
         Console.WriteLine("creating knxprod");
@@ -251,9 +263,83 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         if (file is not null)
         {
             string outpuFolder = Path.Combine(GetStoragePath(), "Temp");
-            OpenKNX.Toolbox.Sign.SignHelper.SignXml(SelectedProduct.ReleaseContent.XmlFile, outpuFolder);
+            string xmlFile = SelectedProduct.ReleaseContent.XmlFile;
+            string outFile = file.Path.AbsolutePath; // @"C:\Users\u6\Documents\repos\OpenKNXproducer\bin\Debug\net6.0\temp.knxprod"; //file.Path?
+            string workingDir = GetAbsWorkingDir(xmlFile); // TODO wrong file
+            Toolbox.Sign.SignHelper.ExportKnxprod(workingDir, outFile, xmlFile, "", false, false);
+            //OpenKNX.Toolbox.Sign.SignHelper.SignXml(SelectedProduct.ReleaseContent.XmlFile, outpuFolder);
         }
     }
+
+    public async Task ImportZip()
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
+            desktop.MainWindow?.StorageProvider is not { } provider)
+            throw new NullReferenceException("Missing StorageProvider instance.");
+
+        var files = await provider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Öffne Release Datei",
+            AllowMultiple = false
+        });
+
+        if (files.Count >= 1)
+        {
+            // Open reading stream from the first file.
+            string outputPath = files[0].Path.AbsolutePath;
+            string fileName = Path.GetFileName(outputPath);
+            fileName = fileName.Substring(0, fileName.LastIndexOf('.'));
+            outputPath = Path.Combine(GetStoragePath(), fileName);
+            if(!Directory.Exists(outputPath))
+                Directory.CreateDirectory(outputPath);
+            System.IO.Compression.ZipFile.ExtractToDirectory(files[0].Path.AbsolutePath, outputPath);
+
+
+            
+            Regex regex = new Regex("([0-9]+).([0-9]+).([0-9]+)");
+            Match m = regex.Match(fileName);
+            int major = 0, minor = 0, build = 0;
+            if(m.Success) 
+            {
+                major = int.Parse(m.Groups[1].Value);
+                minor = int.Parse(m.Groups[2].Value);
+                build = int.Parse(m.Groups[3].Value);
+            } else 
+            {
+                regex = new Regex("([0-9]+).([0-9]+)");
+                m = regex.Match(fileName);
+                if(m.Success)
+                {
+                    major = int.Parse(m.Groups[1].Value);
+                    minor = int.Parse(m.Groups[2].Value);
+                } else {
+
+                }
+            }
+
+
+
+            ReleaseContentModel content = ReleaseContentHelper.GetReleaseContent(Path.Combine(outputPath, "data"));
+            content.RepositoryName = fileName.Substring(0, fileName.LastIndexOf('-'));;
+            content.ReleaseName = Path.GetFileName(files[0].Path.AbsolutePath);
+            // content.IsPrerelease = SelectedRelease.IsPrerelease;
+            // content.Published = SelectedRelease.Published;
+            content.Version = $"v{major}.{minor}.{build}";
+            
+            File.WriteAllText(Path.Combine(outputPath, "cache.json"), Newtonsoft.Json.JsonConvert.SerializeObject(content));
+            LocalReleases.Add(content);
+
+
+        }
+    }
+    
+    private static string GetAbsWorkingDir(string iFilename)
+    {
+        string lResult = Path.GetFullPath(iFilename);
+        lResult = Path.GetDirectoryName(lResult);
+        return lResult;
+    }
+
 
     private string GetStoragePath()
     {
