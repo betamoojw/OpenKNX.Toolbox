@@ -1,23 +1,16 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using OpenKNX.Toolbox.Lib.Data;
 using OpenKNX.Toolbox.Lib.Helper;
 using OpenKNX.Toolbox.Lib.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace OpenKNX.Toolkit.ViewModels;
 
@@ -130,8 +123,6 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     }
 
     #endregion
-
-
 
     public MainWindowViewModel()
     {
@@ -264,10 +255,9 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         {
             string outpuFolder = Path.Combine(GetStoragePath(), "Temp");
             string xmlFile = SelectedProduct.ReleaseContent.XmlFile;
-            string outFile = file.Path.AbsolutePath; // @"C:\Users\u6\Documents\repos\OpenKNXproducer\bin\Debug\net6.0\temp.knxprod"; //file.Path?
-            string workingDir = GetAbsWorkingDir(xmlFile); // TODO wrong file
+            string outFile = file.Path.AbsolutePath;
+            string workingDir = GetAbsWorkingDir(xmlFile);
             Toolbox.Sign.SignHelper.ExportKnxprod(workingDir, outFile, xmlFile, "", false, false);
-            //OpenKNX.Toolbox.Sign.SignHelper.SignXml(SelectedProduct.ReleaseContent.XmlFile, outpuFolder);
         }
     }
 
@@ -294,8 +284,6 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                 Directory.CreateDirectory(outputPath);
             System.IO.Compression.ZipFile.ExtractToDirectory(files[0].Path.AbsolutePath, outputPath);
 
-
-            
             Regex regex = new Regex("([0-9]+).([0-9]+).([0-9]+)");
             Match m = regex.Match(fileName);
             int major = 0, minor = 0, build = 0;
@@ -317,8 +305,6 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                 }
             }
 
-
-
             ReleaseContentModel content = ReleaseContentHelper.GetReleaseContent(Path.Combine(outputPath, "data"));
             content.RepositoryName = fileName.Substring(0, fileName.LastIndexOf('-'));;
             content.ReleaseName = Path.GetFileName(files[0].Path.AbsolutePath);
@@ -328,8 +314,6 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             
             File.WriteAllText(Path.Combine(outputPath, "cache.json"), Newtonsoft.Json.JsonConvert.SerializeObject(content));
             LocalReleases.Add(content);
-
-
         }
     }
     
@@ -343,10 +327,8 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
 
     private string GetStoragePath()
     {
-        //System.AppContext.BaseDirectory
         return Path.Combine(Directory.GetCurrentDirectory(), "Storage");
     }
-
 
     public event PropertyChangedEventHandler? PropertyChanged; 
     private void NotifyPropertyChanged(string propertyName = "")  
