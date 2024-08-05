@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using System;
 
-namespace OpenKNX.Toolkit;
+namespace OpenKNX.Toolbox;
 
 sealed class Program
 {

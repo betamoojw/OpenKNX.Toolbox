@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace OpenKNX.Toolkit.Views;
+namespace OpenKNX.Toolbox.Views;
 
 public partial class MainWindow : Window
 {

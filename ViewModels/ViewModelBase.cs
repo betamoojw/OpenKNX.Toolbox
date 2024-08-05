@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace OpenKNX.Toolkit.ViewModels;
+namespace OpenKNX.Toolbox.ViewModels;
 
 public class ViewModelBase : ObservableObject
 {

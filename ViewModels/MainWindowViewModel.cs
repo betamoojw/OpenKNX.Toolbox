@@ -1,9 +1,11 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using OpenKNX.Toolbox.Lib.Data;
 using OpenKNX.Toolbox.Lib.Helper;
 using OpenKNX.Toolbox.Lib.Models;
+using OpenKNX.Toolbox.Lib.Platforms;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +14,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace OpenKNX.Toolkit.ViewModels;
+namespace OpenKNX.Toolbox.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
 {
@@ -20,6 +22,7 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     public ReleaseContentModel ReleaseContent { get; set;}
     public ObservableCollection<Repository> Repos { get; set; } = new ();
     public ObservableCollection<ReleaseContentModel> LocalReleases { get; set; } = new ();
+    public ObservableCollection<PlatformDevice> PlatformDevices { get; set; } = new ();
 
     public bool CanSelectRepo
     {
@@ -117,8 +120,49 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             if(value == null) return;
             _selectedProduct = value;
             NotifyPropertyChanged("SelectedProduct");
-            Console.WriteLine("changed");
+            _ = UpdatePlatformDevices();
             CanStep2 = true;
+        }
+    }
+
+    private PlatformDevice? _selectedPlatformDevice { get; set; }
+    public PlatformDevice? SelectedPlatformDevice
+    {
+        get { return _selectedPlatformDevice; }
+        set { 
+            _selectedPlatformDevice = value;
+            NotifyPropertyChanged("SelectedPlatformDevice");
+            CanUploadFirmware = value != null;
+        }
+    }
+
+    private bool _canUploadFirmware = false;
+    public bool CanUploadFirmware
+    {
+        get { return _canUploadFirmware; }
+        set {
+            _canUploadFirmware = value;
+            NotifyPropertyChanged("CanUploadFirmware");
+        }
+    }
+
+    private int _updateProgress = 0;
+    public int UpdateProgress
+    {
+        get { return _updateProgress; }
+        set {
+            _updateProgress = value;
+            NotifyPropertyChanged("UpdateProgress");
+        }
+    }
+
+    private int _uploadProgress = 0;
+    public int UploadProgress
+    {
+        get { return _uploadProgress; }
+        set {
+            _uploadProgress = value;
+            NotifyPropertyChanged("UploadProgress");
         }
     }
 
@@ -170,7 +214,9 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                 File.Delete(targetPath);
             Console.WriteLine("Save Release in " + targetPath);
             
-            await GitHubAccess.DownloadRepo(SelectedRelease.Url, targetPath);
+            var progress = new Progress<KeyValuePair<long, long>>();
+            progress.ProgressChanged += ProgressChanged_UpdateRepos;
+            await GitHubAccess.DownloadRepo(SelectedRelease.Url, targetPath, progress);
             
             targetFolder = Path.Combine(current, SelectedRelease.Name.Substring(0, SelectedRelease.Name.LastIndexOf('.')));
             if(Directory.Exists(targetFolder))
@@ -206,7 +252,9 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         System.Console.WriteLine("Updating Repos");
         IsUpdating = true;
         try {
-            var x = await GitHubAccess.GetOpenKnxRepositoriesAsync(ShowPrereleases);
+            var progress = new Progress<KeyValuePair<long, long>>();
+            progress.ProgressChanged += ProgressChanged_UpdateRepos;
+            var x = await GitHubAccess.GetOpenKnxRepositoriesAsync(ShowPrereleases, progress);
             Repos.Clear();
             foreach(Repository repo in x)
                 Repos.Add(repo);
@@ -219,7 +267,19 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         IsUpdating = false;
     }
 
-    public async Task DeleteRelease(ReleaseContentModel model)
+    private void ProgressChanged_UpdateRepos(object? sender, KeyValuePair<long, long> e)
+    {
+        UpdateProgress = (int)(e.Key * 100.0 / e.Value);
+        Console.WriteLine($"Progress: {e.Key} von {e.Value} ({UpdateProgress}%)");
+    }
+
+    private void ProgressChanged_UpdateUpload(object? sender, KeyValuePair<long, long> e)
+    {
+        UploadProgress = (int)(e.Key * 100.0 / e.Value);
+        Console.WriteLine($"Progress: {e.Key} von {e.Value} ({UploadProgress}%)");
+    }
+
+    public void DeleteRelease(ReleaseContentModel model)
     {
         System.Console.WriteLine($"Delete Release {model.RepositoryName} {model.ReleaseName}");
 
@@ -317,6 +377,46 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         }
     }
     
+    public async Task UpdatePlatformDevices()
+    {
+        try
+        {
+            PlatformDevices.Clear();
+            IPlatform? platform = null;
+            foreach(IPlatform plat in OpenKNX.Toolbox.Lib.Helper.PlatformHelper.GetPlatforms())
+                if(plat.Architecture == SelectedProduct.Architecture)
+                    platform = plat;
+            
+            if(platform == null) throw new Exception($"Es konnte keine Platform für Architectur {SelectedProduct.Architecture} gefunden werden");
+            foreach(var y in platform.GetDevices())
+                PlatformDevices.Add(y);
+        } catch
+        {
+
+        }
+    }
+
+    public async Task UploadFirmware()
+    {
+        try
+        {
+            IPlatform? platform = null;
+            foreach(IPlatform plat in OpenKNX.Toolbox.Lib.Helper.PlatformHelper.GetPlatforms())
+                if(plat.Architecture == SelectedProduct.Architecture)
+                    platform = plat;
+            
+            if(platform == null) throw new Exception($"Es konnte keine Platform für Architectur {SelectedProduct.Architecture} gefunden werden");
+            
+            
+            var progress = new Progress<KeyValuePair<long, long>>();
+            progress.ProgressChanged += ProgressChanged_UpdateUpload;
+            await platform.DoUpload(SelectedPlatformDevice, SelectedProduct.FirmwareFile, progress);
+        } catch
+        {
+
+        }
+    }
+
     private static string GetAbsWorkingDir(string iFilename)
     {
         string lResult = Path.GetFullPath(iFilename);

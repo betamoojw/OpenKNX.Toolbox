@@ -3,10 +3,10 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using OpenKNX.Toolkit.ViewModels;
-using OpenKNX.Toolkit.Views;
+using OpenKNX.Toolbox.ViewModels;
+using OpenKNX.Toolbox.Views;
 
-namespace OpenKNX.Toolkit;
+namespace OpenKNX.Toolbox;
 
 public partial class App : Application
 {
