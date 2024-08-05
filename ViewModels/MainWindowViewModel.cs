@@ -2,15 +2,20 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using OpenKNX.Toolbox.Lib.Data;
 using OpenKNX.Toolbox.Lib.Helper;
 using OpenKNX.Toolbox.Lib.Models;
 using OpenKNX.Toolbox.Lib.Platforms;
+using OpenKNX.Toolbox.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -170,28 +175,46 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
 
     public MainWindowViewModel()
     {
+        _ = LoadCache();
+    }
+
+    private async Task LoadCache()
+    {
+        await Task.Delay(1000);
         string cache = Path.Combine(GetStoragePath(), "cache.json");
         if(File.Exists(cache))
         {
-            cache = File.ReadAllText(cache);
-            var repos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Repository>>(cache);
-            Repos.Clear();
-            foreach(Repository repo in repos)
-                Repos.Add(repo);
-            NotifyPropertyChanged("CanSelectRepo");
+            try {
+                cache = File.ReadAllText(cache);
+                var repos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Repository>>(cache);
+                Repos.Clear();
+                foreach(Repository repo in repos)
+                    Repos.Add(repo);
+                NotifyPropertyChanged("CanSelectRepo");
+            } catch(Exception ex) {
+                var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Die lokale Datei für die Repos konnte nicht geladen werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
+                await box.ShowWindowDialogAsync(MainWindow.Instance);
+            }
         }
 
         if(Directory.Exists(GetStoragePath()))
         {
             foreach(string folder in Directory.GetDirectories(GetStoragePath()))
             {
-                if(!File.Exists(Path.Combine(folder, "cache.json")))
-                    continue;
-                cache = File.ReadAllText(Path.Combine(folder, "cache.json"));
-                var model = Newtonsoft.Json.JsonConvert.DeserializeObject<ReleaseContentModel>(cache);
-                foreach(Product prod in model.Products)
-                    prod.ReleaseContent = model;
-                LocalReleases.Add(model);
+                try {
+                    if(!File.Exists(Path.Combine(folder, "cache.json")))
+                        continue;
+                    cache = File.ReadAllText(Path.Combine(folder, "cache.json"));
+                    var model = Newtonsoft.Json.JsonConvert.DeserializeObject<ReleaseContentModel>(cache);
+                    foreach(Product prod in model.Products)
+                        prod.ReleaseContent = model;
+                    LocalReleases.Add(model);
+                } catch(Exception ex) {
+                    string folderName = folder;
+                    folderName = folderName.Substring(folderName.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                    var box = MessageBoxManager.GetMessageBoxStandard("Fehler", $"Die lokale Datei für das Repo '{folderName}' konnte nicht geladen werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
+                    await box.ShowWindowDialogAsync(MainWindow.Instance);
+                }
                 //LocalReleases.Sort((a, b) => a.RepositoryName.ComareTo(b.RepositoryName));
             }
         }
@@ -221,6 +244,12 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             targetFolder = Path.Combine(current, SelectedRelease.Name.Substring(0, SelectedRelease.Name.LastIndexOf('.')));
             if(Directory.Exists(targetFolder))
             {
+                var box = MessageBoxManager.GetMessageBoxStandard("Warnung", $"Das Release '{SelectedRelease?.Name}' existiert bereits lokal.\r\nSoll es überschrieben werden?", ButtonEnum.YesNo, Icon.Warning);
+                var result = await box.ShowWindowDialogAsync(MainWindow.Instance);
+                if(result == ButtonResult.No) {
+                    IsDownloading = false;
+                    return;
+                }
                 Directory.Delete(targetFolder, true);
                 Directory.CreateDirectory(targetFolder);
             }
@@ -241,7 +270,8 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             //LocalReleases.Sort((a, b) => a.RepositoryName.ComareTo(b.RepositoryName));
         } catch(Exception ex)
         {
-            // TODO handle exception and notify user
+            var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Das Repository konnte nicht heruntergeladen werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
+            await box.ShowWindowDialogAsync(MainWindow.Instance);
         }
 
         IsDownloading = false;
@@ -260,9 +290,10 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                 Repos.Add(repo);
             NotifyPropertyChanged("CanSelectRepo");
             File.WriteAllText(Path.Combine(GetStoragePath(), "cache.json"), Newtonsoft.Json.JsonConvert.SerializeObject(Repos));
-        } catch(Exception ex)
-        {
+        } catch(Exception ex) {
             System.Console.WriteLine("Failed to update Repos: " + ex.Message);
+            var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Die Repositories konnten nicht aktualisiert werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
+            await box.ShowWindowDialogAsync(MainWindow.Instance);
         }
         IsUpdating = false;
     }
@@ -294,30 +325,39 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     {
         Console.WriteLine("creating knxprod");
 
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
-            desktop.MainWindow?.StorageProvider is not { } provider)
-            throw new NullReferenceException("Missing StorageProvider instance.");
+        try {
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
+                desktop.MainWindow?.StorageProvider is not { } provider)
+                throw new NullReferenceException("Missing StorageProvider instance.");
 
-        string defaultName = SelectedProduct.ReleaseContent.ReleaseName;
-        defaultName = defaultName.Substring(0, defaultName.LastIndexOf('.'));
+            string defaultName = SelectedProduct.ReleaseContent.ReleaseName;
+            defaultName = defaultName.Substring(0, defaultName.LastIndexOf('.'));
 
-        var file = await provider.SaveFilePickerAsync(new FilePickerSaveOptions
-        {
-            Title = "Speichere KnxProd",
-            SuggestedFileName = defaultName,
-            FileTypeChoices = new[] { new FilePickerFileType("Knx Produkt Datenbank")
+            var file = await provider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                Patterns = new[] { "*.knxprod" }
-            }}
-        });
+                Title = "Speichere KnxProd",
+                SuggestedFileName = defaultName,
+                FileTypeChoices = new[] { new FilePickerFileType("Knx Produkt Datenbank")
+                {
+                    Patterns = new[] { "*.knxprod" }
+                }}
+            });
 
-        if (file is not null)
-        {
-            string outpuFolder = Path.Combine(GetStoragePath(), "Temp");
-            string xmlFile = SelectedProduct.ReleaseContent.XmlFile;
-            string outFile = file.Path.AbsolutePath;
-            string workingDir = GetAbsWorkingDir(xmlFile);
-            Toolbox.Sign.SignHelper.ExportKnxprod(workingDir, outFile, xmlFile, "", false, false);
+            if (file is not null)
+            {
+                string outpuFolder = Path.Combine(GetStoragePath(), "Temp");
+                string xmlFile = SelectedProduct.ReleaseContent.XmlFile;
+                string outFile = file.Path.AbsolutePath;
+                if(File.Exists(outFile))
+                    File.Delete(outFile);
+                string workingDir = GetAbsWorkingDir(xmlFile);
+                Toolbox.Sign.SignHelper.ExportKnxprod(workingDir, outFile, xmlFile, "", false, false);
+                var box = MessageBoxManager.GetMessageBoxStandard("Erfolgeich", "Die KnxProd wurde erfolgreich erstellt.", ButtonEnum.Ok, Icon.Success);
+                await box.ShowWindowDialogAsync(MainWindow.Instance);
+            }
+        } catch(Exception ex) {
+            var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Die KnxProd konnte nicht erstellt werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
+            await box.ShowWindowDialogAsync(MainWindow.Instance);
         }
     }
 
@@ -390,9 +430,9 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             if(platform == null) throw new Exception($"Es konnte keine Platform für Architectur {SelectedProduct.Architecture} gefunden werden");
             foreach(var y in platform.GetDevices())
                 PlatformDevices.Add(y);
-        } catch
-        {
-
+        } catch(Exception ex) {
+            var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Die Liste konnte nicht aktualisiert werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
+            await box.ShowWindowDialogAsync(MainWindow.Instance);
         }
     }
 
@@ -411,9 +451,26 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             var progress = new Progress<KeyValuePair<long, long>>();
             progress.ProgressChanged += ProgressChanged_UpdateUpload;
             await platform.DoUpload(SelectedPlatformDevice, SelectedProduct.FirmwareFile, progress);
-        } catch
-        {
+        } catch(Exception ex) {
+            var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Die Firmware konnte nicht übertragen werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
+            await box.ShowWindowDialogAsync(MainWindow.Instance);
+        }
+    }
 
+    public void OpenInBrowser()
+    {
+        string url = $"https://github.com/OpenKNX/{SelectedRepository.Name}";
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            using var proc = new Process { StartInfo = { UseShellExecute = true, FileName = url } };
+            proc.Start();
+            return;
+        }
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            Process.Start("x-www-browser", url);
+            return;
         }
     }
 
@@ -424,6 +481,17 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         return lResult;
     }
 
+    private string GetExceptionMessages(Exception ex)
+    {
+        string message = "";
+        Exception? current = ex;
+        while(current != null)
+        {
+            message += current.Message + "\r\n";
+            current = current.InnerException;
+        }
+        return message;
+    }
 
     private string GetStoragePath()
     {
