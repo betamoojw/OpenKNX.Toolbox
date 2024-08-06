@@ -151,6 +151,16 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         }
     }
 
+    private bool _updateProgressIsIndeterminate = false;
+    public bool UpdateProgressIsIndeterminate
+    {
+        get { return _updateProgressIsIndeterminate; }
+        set {
+            _updateProgressIsIndeterminate = value;
+            NotifyPropertyChanged("UpdateProgressIsIndeterminate");
+        }
+    }
+
     private int _updateProgress = 0;
     public int UpdateProgress
     {
@@ -158,6 +168,16 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         set {
             _updateProgress = value;
             NotifyPropertyChanged("UpdateProgress");
+        }
+    }
+
+    private bool _uploadProgressIsIndeterminate = false;
+    public bool UploadProgressIsIndeterminate
+    {
+        get { return _uploadProgressIsIndeterminate; }
+        set {
+            _uploadProgressIsIndeterminate = value;
+            NotifyPropertyChanged("UploadProgressIsIndeterminate");
         }
     }
 
@@ -281,6 +301,7 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     {
         System.Console.WriteLine("Updating Repos");
         IsUpdating = true;
+        UpdateProgressIsIndeterminate = true;
         try {
             var progress = new Progress<KeyValuePair<long, long>>();
             progress.ProgressChanged += ProgressChanged_UpdateRepos;
@@ -290,24 +311,45 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                 Repos.Add(repo);
             NotifyPropertyChanged("CanSelectRepo");
             File.WriteAllText(Path.Combine(GetStoragePath(), "cache.json"), Newtonsoft.Json.JsonConvert.SerializeObject(Repos));
+        } catch(Octokit.RateLimitExceededException ex) {
+            System.Console.WriteLine("Raitlimit Exceeded");
+            var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Das Ratelimit für Github wurde überschritten.\r\nDieser wird in einer Stunde zurückgesetzt.\r\nVersuchen Sie es dann erneut.", ButtonEnum.Ok, Icon.Error);
+            await box.ShowWindowDialogAsync(MainWindow.Instance);
         } catch(Exception ex) {
             System.Console.WriteLine("Failed to update Repos: " + ex.Message);
             var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Die Repositories konnten nicht aktualisiert werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
             await box.ShowWindowDialogAsync(MainWindow.Instance);
         }
         IsUpdating = false;
+        UpdateProgressIsIndeterminate = false;
     }
 
     private void ProgressChanged_UpdateRepos(object? sender, KeyValuePair<long, long> e)
     {
-        UpdateProgress = (int)(e.Key * 100.0 / e.Value);
+        if(e.Value == 0) {
+            UpdateProgress = 0;
+            UpdateProgressIsIndeterminate = true;
+        } else {
+            UpdateProgressIsIndeterminate = false;
+            UpdateProgress = (int)(e.Key * 100.0 / e.Value);
+        }
         Console.WriteLine($"Progress: {e.Key} von {e.Value} ({UpdateProgress}%)");
     }
 
     private void ProgressChanged_UpdateUpload(object? sender, KeyValuePair<long, long> e)
     {
-        UploadProgress = (int)(e.Key * 100.0 / e.Value);
-        Console.WriteLine($"Progress: {e.Key} von {e.Value} ({UploadProgress}%)");
+        if(e.Value == 0) {
+            UploadProgress = 0;
+            UploadProgressIsIndeterminate = true;
+        } else {
+            UploadProgressIsIndeterminate = false;
+            int newI = (int)(e.Key * 100.0 / e.Value);
+            if(newI != UploadProgress)
+            {
+                Console.WriteLine($"Progress: {e.Key} von {e.Value} ({UploadProgress}%)");
+                UploadProgress = newI;
+            }
+        }
     }
 
     public void DeleteRelease(ReleaseContentModel model)
@@ -324,7 +366,7 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     public async Task CreateKnxProd()
     {
         Console.WriteLine("creating knxprod");
-
+        UploadProgressIsIndeterminate = true;
         try {
             if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
                 desktop.MainWindow?.StorageProvider is not { } provider)
@@ -351,7 +393,7 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                 if(File.Exists(outFile))
                     File.Delete(outFile);
                 string workingDir = GetAbsWorkingDir(xmlFile);
-                Toolbox.Sign.SignHelper.ExportKnxprod(workingDir, outFile, xmlFile, "", false, false);
+                await Toolbox.Sign.SignHelper.ExportKnxprodAsync(workingDir, outFile, xmlFile, "", false, false);
                 var box = MessageBoxManager.GetMessageBoxStandard("Erfolgeich", "Die KnxProd wurde erfolgreich erstellt.", ButtonEnum.Ok, Icon.Success);
                 await box.ShowWindowDialogAsync(MainWindow.Instance);
             }
@@ -359,6 +401,7 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Die KnxProd konnte nicht erstellt werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
             await box.ShowWindowDialogAsync(MainWindow.Instance);
         }
+        UploadProgressIsIndeterminate = false;
     }
 
     public async Task ImportZip()
@@ -419,6 +462,7 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     
     public async Task UpdatePlatformDevices()
     {
+        UploadProgressIsIndeterminate = true;
         try
         {
             PlatformDevices.Clear();
@@ -428,16 +472,20 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                     platform = plat;
             
             if(platform == null) throw new Exception($"Es konnte keine Platform für Architectur {SelectedProduct.Architecture} gefunden werden");
-            foreach(var y in platform.GetDevices())
+            var devices = await platform.GetDevices();
+            foreach(var y in devices)
                 PlatformDevices.Add(y);
         } catch(Exception ex) {
             var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Die Liste konnte nicht aktualisiert werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
             await box.ShowWindowDialogAsync(MainWindow.Instance);
         }
+        UploadProgressIsIndeterminate = false;
     }
 
     public async Task UploadFirmware()
     {
+        Console.WriteLine("uploading");
+        UploadProgressIsIndeterminate = true;
         try
         {
             IPlatform? platform = null;
@@ -450,11 +498,15 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             
             var progress = new Progress<KeyValuePair<long, long>>();
             progress.ProgressChanged += ProgressChanged_UpdateUpload;
+            Console.WriteLine("uploading2");
             await platform.DoUpload(SelectedPlatformDevice, SelectedProduct.FirmwareFile, progress);
+            var box = MessageBoxManager.GetMessageBoxStandard("Erfolgreich", "Die Firmware wurde erfolgreich übertragen.", ButtonEnum.Ok, Icon.Success);
+            await box.ShowWindowDialogAsync(MainWindow.Instance);
         } catch(Exception ex) {
             var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Die Firmware konnte nicht übertragen werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
             await box.ShowWindowDialogAsync(MainWindow.Instance);
         }
+        UploadProgressIsIndeterminate = false;
     }
 
     public void OpenInBrowser()
