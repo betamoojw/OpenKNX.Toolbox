@@ -5,6 +5,10 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenKNX.Toolbox", "OpenKNX.Toolbox.csproj", "{0F2CF666-F8AC-4F43-9BA3-FFEC6E896A08}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenKNX.Toolbox.Lib", "..\OpenKNX.Toolbox.Lib\OpenKNX.Toolbox.Lib.csproj", "{495CCE1F-241E-4D1F-8DFF-1B49124F31BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenKNX.Toolbox.Sign", "..\OpenKNX.Toolbox.Sign\OpenKNX.Toolbox.Sign.csproj", "{AA17F6E0-8E2B-4F66-A0DF-349F082D6809}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{0F2CF666-F8AC-4F43-9BA3-FFEC6E896A08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F2CF666-F8AC-4F43-9BA3-FFEC6E896A08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F2CF666-F8AC-4F43-9BA3-FFEC6E896A08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{495CCE1F-241E-4D1F-8DFF-1B49124F31BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{495CCE1F-241E-4D1F-8DFF-1B49124F31BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{495CCE1F-241E-4D1F-8DFF-1B49124F31BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{495CCE1F-241E-4D1F-8DFF-1B49124F31BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA17F6E0-8E2B-4F66-A0DF-349F082D6809}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA17F6E0-8E2B-4F66-A0DF-349F082D6809}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA17F6E0-8E2B-4F66-A0DF-349F082D6809}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA17F6E0-8E2B-4F66-A0DF-349F082D6809}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
