@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Kaenx.Creator/Kaenx.Creator.csproj",
+                "${workspaceFolder}//OpenKNX.Toolbox.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
