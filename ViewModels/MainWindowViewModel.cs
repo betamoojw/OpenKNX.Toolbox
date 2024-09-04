@@ -201,6 +201,10 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     private async Task LoadCache()
     {
         await Task.Delay(1000);
+        
+        if(!Directory.Exists(GetStoragePath()))
+            Directory.CreateDirectory(GetStoragePath());
+
         string cache = Path.Combine(GetStoragePath(), "cache.json");
         if(File.Exists(cache))
         {
@@ -217,26 +221,23 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             }
         }
 
-        if(Directory.Exists(GetStoragePath()))
+        foreach(string folder in Directory.GetDirectories(GetStoragePath()))
         {
-            foreach(string folder in Directory.GetDirectories(GetStoragePath()))
-            {
-                try {
-                    if(!File.Exists(Path.Combine(folder, "cache.json")))
-                        continue;
-                    cache = File.ReadAllText(Path.Combine(folder, "cache.json"));
-                    var model = Newtonsoft.Json.JsonConvert.DeserializeObject<ReleaseContentModel>(cache);
-                    foreach(Product prod in model.Products)
-                        prod.ReleaseContent = model;
-                    LocalReleases.Add(model);
-                } catch(Exception ex) {
-                    string folderName = folder;
-                    folderName = folderName.Substring(folderName.LastIndexOf(Path.DirectorySeparatorChar) + 1);
-                    var box = MessageBoxManager.GetMessageBoxStandard("Fehler", $"Die lokale Datei für das Repo '{folderName}' konnte nicht geladen werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
-                    await box.ShowWindowDialogAsync(MainWindow.Instance);
-                }
-                //LocalReleases.Sort((a, b) => a.RepositoryName.ComareTo(b.RepositoryName));
+            try {
+                if(!File.Exists(Path.Combine(folder, "cache.json")))
+                    continue;
+                cache = File.ReadAllText(Path.Combine(folder, "cache.json"));
+                var model = Newtonsoft.Json.JsonConvert.DeserializeObject<ReleaseContentModel>(cache);
+                foreach(Product prod in model.Products)
+                    prod.ReleaseContent = model;
+                LocalReleases.Add(model);
+            } catch(Exception ex) {
+                string folderName = folder;
+                folderName = folderName.Substring(folderName.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                var box = MessageBoxManager.GetMessageBoxStandard("Fehler", $"Die lokale Datei für das Repo '{folderName}' konnte nicht geladen werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
+                await box.ShowWindowDialogAsync(MainWindow.Instance);
             }
+            //LocalReleases.Sort((a, b) => a.RepositoryName.ComareTo(b.RepositoryName));
         }
     }
 
