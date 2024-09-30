@@ -351,6 +351,7 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
             var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Die Repositories konnten nicht aktualisiert werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
             await box.ShowWindowDialogAsync(MainWindow.Instance);
         }
+        FilterReleases();
         IsUpdating = false;
         UpdateProgressIsIndeterminate = false;
     }
