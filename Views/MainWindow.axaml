@@ -36,7 +36,7 @@
             
             <TextBlock Text="Release" Margin="0 10 0 0" />
             <ComboBox ItemsSource="{Binding SelectedRepository.Releases}" SelectedItem="{Binding SelectedRelease}" IsEnabled="{Binding CanSelectRelease}" HorizontalAlignment="Stretch" />
-            
+
             <ProgressBar Value="{Binding UpdateProgress}" IsIndeterminate="{Binding UpdateProgressIsIndeterminate}" Margin="0 5" />
 
             <Grid>
@@ -111,6 +111,7 @@
                                         <ColumnDefinition Width="250" />
                                         <ColumnDefinition />
                                         <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="40" />
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
@@ -124,7 +125,8 @@
                                     <TextBlock Grid.Column="2" Text="{Binding Published}" />
                                     <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding ReleaseName}" />
 
-                                    <Button Grid.RowSpan="2" Grid.Column="3" Command="{Binding #WindowControl.((vm:MainWindowViewModel)DataContext).DeleteRelease}" CommandParameter="{Binding .}" Width="50" VerticalAlignment="Stretch" Margin="10 0 0 0">
+                                    <Image Grid.RowSpan="2" Grid.Column="3" Width="25" IsVisible="{Binding IsPrerelease}" Source="/Assets/prerelease.png" ToolTip.Tip="Pre-Release" />
+                                    <Button Grid.RowSpan="2" Grid.Column="4" Command="{Binding #WindowControl.((vm:MainWindowViewModel)DataContext).DeleteRelease}" CommandParameter="{Binding .}" Width="50" VerticalAlignment="Stretch">
                                         <Image Width="30" Height="30" Source="/Assets/delete.png" />
                                     </Button>
                                 </Grid>
