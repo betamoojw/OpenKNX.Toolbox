@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -114,6 +115,7 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         set {
             _showPrereleases = value;
             NotifyPropertyChanged("ShowPrereleases");
+            FilterReleases();
         }
     }
 
@@ -214,6 +216,7 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                 Repos.Clear();
                 foreach(Repository repo in repos)
                     Repos.Add(repo);
+                FilterReleases();
                 NotifyPropertyChanged("CanSelectRepo");
             } catch(Exception ex) {
                 var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Die lokale Datei für die Repos konnte nicht geladen werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
@@ -237,7 +240,34 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
                 var box = MessageBoxManager.GetMessageBoxStandard("Fehler", $"Die lokale Datei für das Repo '{folderName}' konnte nicht geladen werden:\r\n\r\n" + GetExceptionMessages(ex), ButtonEnum.Ok, Icon.Error);
                 await box.ShowWindowDialogAsync(MainWindow.Instance);
             }
-            //LocalReleases.Sort((a, b) => a.RepositoryName.ComareTo(b.RepositoryName));
+            LocalReleases.Sort((a, b) => string.Compare(a.RepositoryName, b.RepositoryName));
+        }
+    }
+
+    private void FilterReleases()
+    {
+        foreach(Repository repo in Repos)
+        {
+            if(repo.Releases.Count == 0)
+            {
+                foreach(Release rel in repo.ReleasesAll)
+                    repo.Releases.Add(rel);
+            }
+
+            if(ShowPrereleases)
+            {
+                foreach(Release rel in repo.ReleasesAll.Where(r => r.IsPrerelease))
+                {
+                    if(!repo.Releases.Contains(rel))
+                        repo.Releases.Insert(repo.ReleasesAll.IndexOf(rel), rel);
+                }
+            } else {
+                foreach(Release rel in repo.ReleasesAll.Where(r => r.IsPrerelease))
+                {
+                    if(repo.Releases.Contains(rel))
+                        repo.Releases.Remove(rel);
+                }
+            }
         }
     }
 
@@ -306,7 +336,7 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
         try {
             var progress = new Progress<KeyValuePair<long, long>>();
             progress.ProgressChanged += ProgressChanged_UpdateRepos;
-            var x = await GitHubAccess.GetOpenKnxRepositoriesAsync(ShowPrereleases, progress);
+            var x = await GitHubAccess.GetOpenKnxRepositoriesAsync(progress);
             Repos.Clear();
             foreach(Repository repo in x)
                 Repos.Add(repo);
