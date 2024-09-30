@@ -513,6 +513,11 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     public void OpenInBrowser()
     {
         string url = $"https://github.com/OpenKNX/{SelectedRepository.Name}";
+        if(SelectedRelease != null)
+        {
+            url = SelectedRelease.UrlRelease;
+        }
+
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             using var proc = new Process { StartInfo = { UseShellExecute = true, FileName = url } };
