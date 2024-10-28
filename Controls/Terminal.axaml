@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:OpenKNX.Toolbox.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="OpenKNX.Toolbox.Controls.Terminal"
+             x:DataType="vm:TerminalViewModel"
+             x:Name="TerminalControl">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        
+        <StackPanel>
+            <ComboBox ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedPlatformDevice}" HorizontalAlignment="Stretch" />
+            <Button Command="{Binding UpdatePlatformDevices}" Content="Aktualisieren" HorizontalAlignment="Stretch" />
+            <Button Command="{Binding OpenPutty}" Content="Putty öffnen" IsEnabled="{Binding CanOpenPutty}" HorizontalAlignment="Stretch" />
+        </StackPanel>
+    </Grid>
+</UserControl>

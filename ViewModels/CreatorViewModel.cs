@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace OpenKNX.Toolbox.ViewModels;
 
-public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
+public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
 {
     #region Properties
     public ReleaseContentModel ReleaseContent { get; set;}
@@ -195,7 +195,7 @@ public partial class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
 
     #endregion
 
-    public MainWindowViewModel()
+    public CreatorViewModel()
     {
         _ = LoadCache();
     }

@@ -1,0 +1,135 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OpenKNX.Toolbox.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="OpenKNX.Toolbox.Controls.Creator"
+        x:DataType="vm:CreatorViewModel"
+        x:Name="CreatorControl">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Release hinzufügen" FontSize="20" Margin="10 0 0 0" />
+        <StackPanel Grid.Row="1" Margin="10">
+            <TextBlock Text="Projekte" />
+            <ComboBox ItemsSource="{Binding Repos}" SelectedItem="{Binding SelectedRepository}" IsEnabled="{Binding CanSelectRepo}" HorizontalAlignment="Stretch" />
+            
+            <TextBlock Text="Release" Margin="0 10 0 0" />
+            <ComboBox ItemsSource="{Binding SelectedRepository.Releases}" SelectedItem="{Binding SelectedRelease}" IsEnabled="{Binding CanSelectRelease}" HorizontalAlignment="Stretch" />
+
+            <ProgressBar Value="{Binding UpdateProgress}" IsIndeterminate="{Binding UpdateProgressIsIndeterminate}" Margin="0 5" />
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Button Command="{Binding UpdateRepos}" Content="Aktualisieren" IsEnabled="{Binding CanUpdateRepos}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="0 0 5 0" />
+                <Button Grid.Column="1" Command="{Binding DownloadRelease}" IsEnabled="{Binding CanDownloadRelease}" Content="Herunterladen" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" />
+                <Button Grid.Row="1" Command="{Binding ImportZip}" Content="Zip importieren" IsEnabled="{Binding CanUpdateRepos}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="0 5 5 0" />
+                <Button Grid.Row="1" Grid.Column="1" Command="{Binding OpenInBrowser}" Content="Im Browser öffnen" IsEnabled="{OnPlatform false, Windows='true', Linux='true'}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="0 5 0 0" />
+            </Grid>
+            <CheckBox Content="Pre-Releases in Projekten anzeigen" IsChecked="{Binding ShowPrereleases}" />
+        </StackPanel>
+
+        <Grid Grid.Row="2" Margin="10" VerticalAlignment="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.ColumnSpan="2" Text="Ausgewählt" FontSize="20" />
+            
+            <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
+                <TextBlock Text="{Binding SelectedProduct.ReleaseContent.RepositoryName}" />
+                <TextBlock Text="{Binding SelectedProduct.ReleaseContent.Version}" Margin="5 0 0 0" />
+            </StackPanel>
+            <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding SelectedProduct.Name}" />
+
+            <Button Grid.Row="1" Grid.RowSpan="2" Command="{Binding CreateKnxProd}" Content="KnxProd erstellen" IsEnabled="{Binding CanStep2}" Margin="0 0 5 0" />
+        </Grid>
+
+        <TextBlock Grid.Row="3" Text="Release aufspielen" FontSize="20" Margin="10 0 0 0" />
+        <Grid Grid.Row="4" IsEnabled="{Binding CanStep2}" Margin="10 0 0 10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <ComboBox Grid.ColumnSpan="2" ItemsSource="{Binding PlatformDevices}" SelectedItem="{Binding SelectedPlatformDevice}" HorizontalAlignment="Stretch" />
+
+            <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Value="{Binding UploadProgress}" IsIndeterminate="{Binding UploadProgressIsIndeterminate}" Margin="0 5" />
+
+            <Button Grid.Row="2" Command="{Binding UpdatePlatformDevices}" Content="Liste aktualisieren" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" />
+            <Button Grid.Row="2" Grid.Column="1" Command="{Binding UploadFirmware}" IsEnabled="{Binding CanUploadFirmware}" Content="Firmware aufspielen" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" />
+        </Grid>
+
+        <TextBlock Grid.Column="1" Text="Lokale Releases" FontSize="20" Margin="10 0 0 0" />
+        <ScrollViewer Grid.Column="1" Grid.Row="1" Grid.RowSpan="6" VerticalAlignment="Stretch" Margin="10">
+            <ItemsRepeater ItemsSource="{Binding LocalReleases}" >
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate>
+                        <Expander HorizontalAlignment="Stretch" CornerRadius="0" >
+                            <Expander.Header>
+                                <Grid Margin="0 5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="250" />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="40" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    
+                                    <TextBlock Text="{Binding RepositoryName}" FontSize="16" FontWeight="Bold" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Version}" FontSize="16" FontWeight="Bold" Margin="10 0 0 0" HorizontalAlignment="Left" />
+                                    <TextBlock Grid.Column="2" Text="{Binding Published}" />
+                                    <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding ReleaseName}" />
+
+                                    <Image Grid.RowSpan="2" Grid.Column="3" Width="25" IsVisible="{Binding IsPrerelease}" Source="/Assets/prerelease.png" ToolTip.Tip="Pre-Release" />
+                                    <Button Grid.RowSpan="2" Grid.Column="4" Command="{Binding #CreatorControl.((vm:CreatorViewModel)DataContext).DeleteRelease}" CommandParameter="{Binding .}" Width="50" VerticalAlignment="Stretch">
+                                        <Image Width="30" Height="30" Source="/Assets/delete.png" />
+                                    </Button>
+                                </Grid>
+                            </Expander.Header>
+
+                            <ListBox ItemsSource="{Binding Products}" SelectedItem="{Binding #CreatorControl.((vm:CreatorViewModel)DataContext).SelectedProduct}" />
+                        </Expander>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollViewer>
+    </Grid>
+
+</UserControl>
