@@ -25,7 +25,7 @@ namespace OpenKNX.Toolbox.ViewModels;
 public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
 {
     #region Properties
-    public ReleaseContentModel ReleaseContent { get; set;}
+    public ReleaseContentModel? ReleaseContent { get; set;}
     public ObservableCollection<Repository> Repos { get; set; } = new ();
     public ObservableCollection<ReleaseContentModel> LocalReleases { get; set; } = new ();
     public ObservableCollection<PlatformDevice> PlatformDevices { get; set; } = new ();
@@ -212,7 +212,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
         {
             try {
                 cache = File.ReadAllText(cache);
-                var repos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Repository>>(cache);
+                var repos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Repository>>(cache) ?? new List<Repository>();
                 Repos.Clear();
                 foreach(Repository repo in repos)
                     Repos.Add(repo);
@@ -231,6 +231,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
                     continue;
                 cache = File.ReadAllText(Path.Combine(folder, "cache.json"));
                 var model = Newtonsoft.Json.JsonConvert.DeserializeObject<ReleaseContentModel>(cache);
+                if(model == null) continue;
                 foreach(Product prod in model.Products)
                     prod.ReleaseContent = model;
                 LocalReleases.Add(model);
@@ -279,6 +280,9 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
         string targetFolder = "";
 
         try {
+            if(SelectedRelease == null || SelectedRepository == null)
+                throw new Exception("Es wurde kein Release oder Repository ausgewählt.");
+
             string current = GetStoragePath();
             if(!Directory.Exists(current))
                 Directory.CreateDirectory(current);
@@ -295,7 +299,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
             targetFolder = Path.Combine(current, SelectedRelease.Name.Substring(0, SelectedRelease.Name.LastIndexOf('.')));
             if(Directory.Exists(targetFolder))
             {
-                var box = MessageBoxManager.GetMessageBoxStandard("Warnung", $"Das Release '{SelectedRelease?.Name}' existiert bereits lokal.\r\nSoll es überschrieben werden?", ButtonEnum.YesNo, Icon.Warning);
+                var box = MessageBoxManager.GetMessageBoxStandard("Warnung", $"Das Release '{SelectedRelease.Name}' existiert bereits lokal.\r\nSoll es überschrieben werden?", ButtonEnum.YesNo, Icon.Warning);
                 var result = await box.ShowWindowDialogAsync(MainWindow.Instance);
                 if(result == ButtonResult.No) {
                     IsDownloading = false;
@@ -311,10 +315,10 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
 
             ReleaseContentModel content = ReleaseContentHelper.GetReleaseContent(Path.Combine(targetFolder, "data"));
             content.RepositoryName = SelectedRepository.Name;
-            content.ReleaseName = SelectedRelease.Name;
-            content.IsPrerelease = SelectedRelease.IsPrerelease;
-            content.Published = SelectedRelease.Published;
-            content.Version = $"v{SelectedRelease.Major}.{SelectedRelease.Minor}.{SelectedRelease.Build}";
+            content.ReleaseName = SelectedRelease?.Name ?? "";
+            content.IsPrerelease = SelectedRelease?.IsPrerelease ?? false;
+            content.Published = SelectedRelease?.Published ?? DateTime.Now;
+            content.Version = $"v{SelectedRelease?.Major}.{SelectedRelease?.Minor}.{SelectedRelease?.Build}";
             
             File.WriteAllText(Path.Combine(targetFolder, "cache.json"), Newtonsoft.Json.JsonConvert.SerializeObject(content));
             LocalReleases.Add(content);
@@ -343,7 +347,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
             NotifyPropertyChanged("CanSelectRepo");
             File.WriteAllText(Path.Combine(GetStoragePath(), "cache.json"), Newtonsoft.Json.JsonConvert.SerializeObject(Repos));
         } catch(Octokit.RateLimitExceededException ex) {
-            System.Console.WriteLine("Raitlimit Exceeded");
+            System.Console.WriteLine("Raitlimit Exceeded " + ex.Message);
             var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Das Ratelimit für Github wurde überschritten.\r\nDieser wird in einer Stunde zurückgesetzt.\r\nVersuchen Sie es dann erneut.", ButtonEnum.Ok, Icon.Error);
             await box.ShowWindowDialogAsync(MainWindow.Instance);
         } catch(Exception ex) {
@@ -400,11 +404,14 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
         Console.WriteLine("creating knxprod");
         UploadProgressIsIndeterminate = true;
         try {
+            if(SelectedProduct == null || SelectedProduct.ReleaseContent == null)
+                throw new Exception("Es wurde kein Produkt ausgewählt oder ReleaseContent ist null.");
+
             if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
                 desktop.MainWindow?.StorageProvider is not { } provider)
                 throw new NullReferenceException("Missing StorageProvider instance.");
 
-            string defaultName = SelectedProduct.ReleaseContent.ReleaseName;
+            string defaultName = SelectedProduct.ReleaseContent?.ReleaseName ?? "default";
             defaultName = defaultName.Substring(0, defaultName.LastIndexOf('.'));
 
             var file = await provider.SaveFilePickerAsync(new FilePickerSaveOptions
@@ -420,13 +427,13 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
             if (file is not null)
             {
                 string outpuFolder = Path.Combine(GetStoragePath(), "Temp");
-                string xmlFile = SelectedProduct.ReleaseContent.XmlFile;
+                string xmlFile = SelectedProduct.ReleaseContent?.XmlFile ?? "";
                 string outFile = file.Path.AbsolutePath;
                 if(File.Exists(outFile))
                     File.Delete(outFile);
                 string workingDir = GetAbsWorkingDir(xmlFile);
                 await Toolbox.Sign.SignHelper.ExportKnxprodAsync(workingDir, outFile, xmlFile, "", false, false);
-                var box = MessageBoxManager.GetMessageBoxStandard("Erfolgeich", "Die KnxProd wurde erfolgreich erstellt.", ButtonEnum.Ok, Icon.Success);
+                var box = MessageBoxManager.GetMessageBoxStandard("Erfolgeich", "Die KnxProd wurde erfolgreich erstellt.", ButtonEnum.Ok, Icon.Info);
                 await box.ShowWindowDialogAsync(MainWindow.Instance);
             }
         } catch(Exception ex) {
@@ -497,6 +504,9 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
         UploadProgressIsIndeterminate = true;
         try
         {
+            if(SelectedProduct == null)
+                throw new Exception("Es wurde kein Produkt ausgewählt.");
+
             PlatformDevices.Clear();
             IPlatform? platform = null;
             foreach(IPlatform plat in OpenKNX.Toolbox.Lib.Helper.PlatformHelper.GetPlatforms())
@@ -520,13 +530,15 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
         UploadProgressIsIndeterminate = true;
         try
         {
+            if(SelectedProduct == null || SelectedPlatformDevice == null)
+                throw new Exception("Es wurde kein Produkt oder Gerät ausgewählt.");
+
             IPlatform? platform = null;
             foreach(IPlatform plat in OpenKNX.Toolbox.Lib.Helper.PlatformHelper.GetPlatforms())
                 if(plat.Architecture == SelectedProduct.Architecture)
                     platform = plat;
             
             if(platform == null) throw new Exception($"Es konnte keine Platform für Architectur {SelectedProduct.Architecture} gefunden werden");
-            
             
             var progress = new Progress<KeyValuePair<long, long>>();
             progress.ProgressChanged += ProgressChanged_UpdateUpload;
@@ -543,6 +555,9 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void OpenInBrowser()
     {
+        if(SelectedRepository == null)
+            return;
+
         string url = $"https://github.com/OpenKNX/{SelectedRepository.Name}";
         if(SelectedRelease != null)
         {
@@ -566,7 +581,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
     private static string GetAbsWorkingDir(string iFilename)
     {
         string lResult = Path.GetFullPath(iFilename);
-        lResult = Path.GetDirectoryName(lResult);
+        lResult = Path.GetDirectoryName(lResult) ?? "";
         return lResult;
     }
 
@@ -587,7 +602,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
         return Path.Combine(Directory.GetCurrentDirectory(), "Storage");
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged; 
+    public new event PropertyChangedEventHandler? PropertyChanged; 
     private void NotifyPropertyChanged(string propertyName = "")  
     {  
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

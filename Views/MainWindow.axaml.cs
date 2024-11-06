@@ -11,6 +11,10 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Instance = this;
-        this.Title += " - v" + string.Join('.', System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString().Split('.').Take(3));
+        var assembly = System.Reflection.Assembly.GetEntryAssembly();
+        if(assembly == null) return;
+        var vers = assembly.GetName().Version;
+        if(vers == null) return;
+        this.Title += " - v" + string.Join('.', vers.ToString().Split('.').Take(3));
     }
 }

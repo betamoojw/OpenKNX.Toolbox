@@ -40,7 +40,7 @@ public partial class FiletransferViewModel : ViewModelBase, INotifyPropertyChang
             Devices.Add(device);
     }
     
-    public async Task OpenPutty()
+    public void OpenPutty()
     {
         string url = $"putty ";
         
@@ -58,7 +58,7 @@ public partial class FiletransferViewModel : ViewModelBase, INotifyPropertyChang
         }
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged; 
+    public new event PropertyChangedEventHandler? PropertyChanged; 
     private void NotifyPropertyChanged(string propertyName = "")  
     {  
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
