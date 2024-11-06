@@ -591,9 +591,14 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
         Exception? current = ex;
         while(current != null)
         {
-            message += current.Message + "\r\n";
+            message += ex.GetType().ToString() + "\r\n";
+            if(!string.IsNullOrEmpty(current.Message))
+                message += current.Message +  "\r\n";
             current = current.InnerException;
         }
+
+        message += ex.StackTrace;
+
         return message;
     }
 
