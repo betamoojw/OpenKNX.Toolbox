@@ -16,9 +16,10 @@ Der Linux Support ist jedoch noch experimentell und
 nicht alle funktionen werden unterstützt.
 
 ### Verwendete Libraries
-Dieses Tool verwendet folgende Repos/Packete:
+Dieses Tool verwendet folgende Repos:  
  - [OpenKNX.Toolbox.Lib](https://github.com/OpenKNX/OpenKNX.Toolbox.Lib) GPLv3
  - [OpenKNX.Toolbox.Sign](https://github.com/OpenKNX/OpenKNX.Toolbox.Sign) GPLv3
+und folgende Pakete:  
  - [Octokit.net](https://github.com/octokit/octokit.net) MIT
  - [Avalonia](https://www.nuget.org/packages/Avalonia) MIT
  - [Avalonia.Controls.ItemsRepeater](https://www.nuget.org/packages/Avalonia.Controls.ItemsRepeater) MIT
