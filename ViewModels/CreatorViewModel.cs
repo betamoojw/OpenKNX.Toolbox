@@ -428,7 +428,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
             {
                 string outpuFolder = Path.Combine(GetStoragePath(), "Temp");
                 string xmlFile = SelectedProduct.ReleaseContent?.XmlFile ?? "";
-                string outFile = file.Path.AbsolutePath;
+                string outFile = file.Path.AbsolutePath.Replace("%20", " ");
                 if(File.Exists(outFile))
                     File.Delete(outFile);
                 string workingDir = GetAbsWorkingDir(xmlFile);
