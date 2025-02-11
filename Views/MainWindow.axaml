@@ -14,12 +14,12 @@
         <TabItem Header="Soft-/Firmware">
             <ctrls:Creator />
         </TabItem>
-        <TabItem Header="Filetransfer">
+        <!-- <TabItem Header="Filetransfer">
             <ctrls:Filetransfer />
-        </TabItem>
-        <TabItem Header="Terminal">
+        </TabItem> -->
+        <!-- <TabItem Header="Terminal">
             <ctrls:Terminal />
-        </TabItem>
+        </TabItem> -->
     </TabControl>
     
 </Window>
