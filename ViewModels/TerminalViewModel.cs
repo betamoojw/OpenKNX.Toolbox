@@ -1,8 +1,11 @@
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using OpenKNX.Toolbox.Lib.Helper;
 using OpenKNX.Toolbox.Lib.Platforms;
 
@@ -40,15 +43,20 @@ public partial class TerminalViewModel : ViewModelBase, INotifyPropertyChanged
             Devices.Add(device);
     }
     
-    public void OpenPutty()
+    public async void OpenPutty()
     {
         string url = $"putty -serial {SelectedPlatformDevice?.Path} -sercfg 115200,8,n,1,N";
         
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            using var proc = new Process { StartInfo = { UseShellExecute = true, FileName = url } };
-            proc.Start();
-            return;
+            try {
+                using var proc = new Process { StartInfo = { UseShellExecute = true, FileName = url } };
+                proc.Start();
+                return;
+            } catch (Exception ex) {
+                var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Putty konnte nicht gestartet werden:\r\n\r\n" + ex.Message, ButtonEnum.Ok, Icon.Error);
+                await box.ShowWindowDialogAsync(Views.MainWindow.Instance);
+            }
         }
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
