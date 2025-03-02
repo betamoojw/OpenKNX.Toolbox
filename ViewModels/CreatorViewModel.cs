@@ -464,7 +464,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
             outputPath = Path.Combine(GetStoragePath(), fileName);
             if(!Directory.Exists(outputPath))
                 Directory.CreateDirectory(outputPath);
-            System.IO.Compression.ZipFile.ExtractToDirectory(files[0].Path.AbsolutePath, outputPath);
+            System.IO.Compression.ZipFile.ExtractToDirectory(files[0].Path.AbsolutePath.Replace("%20", " "), outputPath);
 
             Regex regex = new Regex("([0-9]+).([0-9]+).([0-9]+)");
             Match m = regex.Match(fileName);
