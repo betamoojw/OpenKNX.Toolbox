@@ -44,6 +44,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
             NotifyPropertyChanged("SelectedRepository");
             NotifyPropertyChanged("CanSelectRelease");
             CheckReleases();
+            CheckOpenBrowser();
         }
     }
 
@@ -55,6 +56,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
             _selectedRelease = value;
             NotifyPropertyChanged("SelectedRelease");
             NotifyPropertyChanged("CanDownloadRelease");
+            CheckOpenBrowser();
         }
     }
 
@@ -205,6 +207,16 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
         }
     }
 
+    private string _openInBrowserText = "Repo in Browser öffnen";
+    public string OpenInBrowserText
+    {
+        get { return _openInBrowserText; }
+        set {
+            _openInBrowserText = value;
+            NotifyPropertyChanged("OpenInBrowserText");
+        }
+    }
+
     #endregion
 
     public CreatorViewModel()
@@ -347,20 +359,35 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
     public void CheckReleases()
     {
         if(_selectedRepository != null)
+        {
+            if(_selectedRepository.Releases.Count == 0 && _selectedRepository.ReleasesAll.Count > 0)
             {
-                if(_selectedRepository.Releases.Count == 0 && _selectedRepository.ReleasesAll.Count > 0)
-                {
-                    ReleasePlaceHolder = "Nur Prereleases verfügbar";
-                }
-                else if(_selectedRepository.ReleasesAll.Count == 0)
-                {
-                    ReleasePlaceHolder = "Keine Releases verfügbar";
-                }
-                else
-                {
-                    ReleasePlaceHolder = "Release auswählen";
-                }
+                ReleasePlaceHolder = "Nur Prereleases verfügbar";
             }
+            else if(_selectedRepository.ReleasesAll.Count == 0)
+            {
+                ReleasePlaceHolder = "Keine Releases verfügbar";
+            }
+            else
+            {
+                ReleasePlaceHolder = "Release auswählen";
+            }
+        }
+    }
+
+    public void CheckOpenBrowser()
+    {
+        if(SelectedRepository == null)
+            return;
+
+        if(SelectedRelease != null)
+        {
+            OpenInBrowserText = "Release-Notes öffnen";
+        }
+        else
+        {
+            OpenInBrowserText = "Repository öffnen";
+        }
     }
 
     public async Task UpdateRepos()

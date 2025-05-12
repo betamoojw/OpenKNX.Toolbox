@@ -44,7 +44,7 @@
                 <Button Command="{Binding UpdateRepos}" Content="Aktualisieren" IsEnabled="{Binding CanUpdateRepos}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="0 0 5 0" />
                 <Button Grid.Column="1" Command="{Binding DownloadRelease}" IsEnabled="{Binding CanDownloadRelease}" Content="Herunterladen" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" />
                 <Button Grid.Row="1" Command="{Binding ImportZip}" Content="Zip importieren" IsEnabled="{Binding CanUpdateRepos}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="0 5 5 0" />
-                <Button Grid.Row="1" Grid.Column="1" Command="{Binding OpenInBrowser}" Content="Im Browser öffnen" IsEnabled="{OnPlatform false, Windows='true', Linux='true'}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="0 5 0 0" />
+                <Button Grid.Row="1" Grid.Column="1" Command="{Binding OpenInBrowser}" Content="{Binding OpenInBrowserText}" IsEnabled="{OnPlatform false, Windows='true', Linux='true'}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="0 5 0 0" />
             </Grid>
             <CheckBox Content="Pre-Releases in Projekten anzeigen" IsChecked="{Binding ShowPrereleases}" />
         </StackPanel>
