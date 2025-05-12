@@ -613,10 +613,14 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
         UploadProgressIsIndeterminate = false;
     }
 
-    public void OpenInBrowser()
+    public async Task OpenInBrowser()
     {
         if(SelectedRepository == null)
+        {
+            var box = MessageBoxManager.GetMessageBoxStandard("Fehler", "Bitte wählen Sie zuerst ein Projekt aus.", ButtonEnum.Ok, Icon.Error);
+            await box.ShowWindowDialogAsync(MainWindow.Instance);
             return;
+        }
 
         string url = $"https://github.com/OpenKNX/{SelectedRepository.Name}";
         if(SelectedRelease != null)
