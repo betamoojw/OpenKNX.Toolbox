@@ -43,6 +43,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
             _selectedRepository = value;
             NotifyPropertyChanged("SelectedRepository");
             NotifyPropertyChanged("CanSelectRelease");
+            CheckReleases();
         }
     }
 
@@ -116,6 +117,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
             _showPrereleases = value;
             NotifyPropertyChanged("ShowPrereleases");
             FilterReleases();
+            CheckReleases();
         }
     }
 
@@ -190,6 +192,16 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
         set {
             _uploadProgress = value;
             NotifyPropertyChanged("UploadProgress");
+        }
+    }
+
+    private string _releasePlaceHolder = "Release auswählen";
+    public string ReleasePlaceHolder
+    {
+        get { return _releasePlaceHolder; }
+        set {
+            _releasePlaceHolder = value;
+            NotifyPropertyChanged("ReleasePlaceHolder");
         }
     }
 
@@ -330,6 +342,25 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
         }
 
         IsDownloading = false;
+    }
+
+    public void CheckReleases()
+    {
+        if(_selectedRepository != null)
+            {
+                if(_selectedRepository.Releases.Count == 0 && _selectedRepository.ReleasesAll.Count > 0)
+                {
+                    ReleasePlaceHolder = "Nur Prereleases verfügbar";
+                }
+                else if(_selectedRepository.ReleasesAll.Count == 0)
+                {
+                    ReleasePlaceHolder = "Keine Releases verfügbar";
+                }
+                else
+                {
+                    ReleasePlaceHolder = "Release auswählen";
+                }
+            }
     }
 
     public async Task UpdateRepos()

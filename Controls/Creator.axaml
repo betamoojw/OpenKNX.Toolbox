@@ -27,7 +27,7 @@
             <ComboBox PlaceholderText="Projekt auswählen" ItemsSource="{Binding Repos}" SelectedItem="{Binding SelectedRepository}" IsEnabled="{Binding CanSelectRepo}" HorizontalAlignment="Stretch" />
             
             <TextBlock Text="Release" Margin="0 10 0 0" />
-            <ComboBox PlaceholderText="Release auswählen" ItemsSource="{Binding SelectedRepository.Releases}" SelectedItem="{Binding SelectedRelease}" IsEnabled="{Binding CanSelectRelease}" HorizontalAlignment="Stretch" />
+            <ComboBox PlaceholderText="{Binding ReleasePlaceHolder}" ItemsSource="{Binding SelectedRepository.Releases}" SelectedItem="{Binding SelectedRelease}" IsEnabled="{Binding CanSelectRelease}" HorizontalAlignment="Stretch" />
 
             <ProgressBar Value="{Binding UpdateProgress}" IsIndeterminate="{Binding UpdateProgressIsIndeterminate}" Margin="0 5" />
 
