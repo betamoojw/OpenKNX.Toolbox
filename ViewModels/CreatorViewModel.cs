@@ -342,7 +342,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
             content.ReleaseName = SelectedRelease?.Name ?? "";
             content.IsPrerelease = SelectedRelease?.IsPrerelease ?? false;
             content.Published = SelectedRelease?.Published ?? DateTime.Now;
-            content.Version = $"v{SelectedRelease?.Major}.{SelectedRelease?.Minor}.{SelectedRelease?.Build}";
+            content.Version = $"v{SelectedRelease?.Version}";
             
             File.WriteAllText(Path.Combine(targetFolder, "cache.json"), Newtonsoft.Json.JsonConvert.SerializeObject(content));
             LocalReleases.Add(content);
