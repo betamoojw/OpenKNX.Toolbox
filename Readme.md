@@ -15,6 +15,14 @@ Die Toolbox funktioniert auf Windows und Linux PCs.
 Der Linux Support ist jedoch noch experimentell und   
 nicht alle funktionen werden unterstützt.
 
+### Benennung der Releases in den Repos
+Der Tag des Release muss dem SematicVersion entsprechen:  
+`major.minor.build-buildLabel+patchLabel`  
+Sollte für ein Release mehrere Assets zur Verfügung stehen, werden diese als getrennte Elemente in der Combobox dargestellt. Damit man die Versionen unterscheiden kann, ist es möglich das BuildLabel aus der Version zu Überschreiben. Dies erfolgt über den Dateinamen der Zip:  
+`[RepoName]-[BuildLabel]-[SemanticVersion].zip`  
+Der Standardwert ist Release oder Beta und wird von den Buildscripten erstellt.  
+Das BuildLabel kann beliebig gewählt werden, darf aber kein Bindestrich enthalten.  
+
 ### Verwendete Libraries
 Dieses Tool verwendet folgende Repos:  
  - [OpenKNX.Toolbox.Lib](https://github.com/OpenKNX/OpenKNX.Toolbox.Lib) GPLv3
