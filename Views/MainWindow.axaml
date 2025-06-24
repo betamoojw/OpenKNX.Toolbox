@@ -6,9 +6,31 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="OpenKNX.Toolbox.Views.MainWindow"
-        Icon="/Assets/openknx.ico"
         Title="OpenKNX.Toolbox"
         Name="WindowControl">
+    <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key='Light'>
+          <SolidColorBrush x:Key='BackgroundBrush'>White</SolidColorBrush>
+          <SolidColorBrush x:Key='ForegroundBrush'>Black</SolidColorBrush>
+          <WindowIcon x:Key="WindowIcon">/Assets/openknx_light.ico</WindowIcon>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key='Dark'>
+          <SolidColorBrush x:Key='BackgroundBrush'>Black</SolidColorBrush>
+          <SolidColorBrush x:Key='ForegroundBrush'>White</SolidColorBrush>
+          <WindowIcon x:Key="WindowIcon">/Assets/openknx_dark.ico</WindowIcon>
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary>
+    </Window.Resources>
+    <Window.Styles>
+    <Style Selector="Window">
+      <!-- <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
+      <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" /> -->
+      <Setter Property="Icon" Value="{DynamicResource WindowIcon}" />
+    </Style>
+  </Window.Styles>
 
     <TabControl>
         <TabItem Header="Soft-/Firmware">

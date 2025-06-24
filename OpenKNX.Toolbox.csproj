@@ -7,7 +7,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-    <ApplicationIcon>Assets/openknx.ico</ApplicationIcon>
+    <ApplicationIcon>Assets/openknx_file.ico</ApplicationIcon>
     <Version>1.0.8.0</Version>
   </PropertyGroup>
 
