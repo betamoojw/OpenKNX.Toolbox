@@ -337,7 +337,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
             if(File.Exists(targetPath))
                 File.Delete(targetPath);
 
-            ReleaseContentModel content = ReleaseContentHelper.GetReleaseContent(Path.Combine(targetFolder, "data"));
+            ReleaseContentModel content = ReleaseContentHelper.GetReleaseContent(targetFolder);
             content.RepositoryName = SelectedRepository.Name;
             content.ReleaseName = SelectedRelease?.Name ?? "";
             content.IsPrerelease = SelectedRelease?.IsPrerelease ?? false;
@@ -547,7 +547,7 @@ public partial class CreatorViewModel : ViewModelBase, INotifyPropertyChanged
                 }
             }
 
-            ReleaseContentModel content = ReleaseContentHelper.GetReleaseContent(Path.Combine(outputPath, "data"));
+            ReleaseContentModel content = ReleaseContentHelper.GetReleaseContent(outputPath);
             content.RepositoryName = fileName.Substring(0, fileName.LastIndexOf('-'));;
             content.ReleaseName = Path.GetFileName(files[0].Path.AbsolutePath);
             // content.IsPrerelease = SelectedRelease.IsPrerelease;
