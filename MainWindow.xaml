@@ -44,7 +44,7 @@
                         <ui:SymbolIcon Symbol="ClipboardPulse24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-                <ui:NavigationViewItem Content="Laufende Aktionen" TargetPageType="{x:Type pages:ActionsPage}">
+                <ui:NavigationViewItem Content="Geplante Aktionen" TargetPageType="{x:Type pages:ActionsPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="ReceiptPlay24" />
                     </ui:NavigationViewItem.Icon>
@@ -54,16 +54,27 @@
                 </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
             <ui:NavigationView.PaneFooter>
-                <StackPanel Margin="10,0,5,10" Visibility="{Binding DeviceManagerViewModel.SelectedDevice, Converter={StaticResource NullToVisibilityConverter}}">
-                    <ui:TextBlock Text="Ausgewähltes Gerät" FontWeight="Bold" />
-                    <ui:TextBlock>
-                        <Run Text="{Binding DeviceManagerViewModel.SelectedDevice.Address}" />
-                        <Run Text="{Binding DeviceManagerViewModel.SelectedDevice.FirmwareName}" />
-                    </ui:TextBlock>
-                    <ui:TextBlock>
-                        <Run Text="{Binding DeviceManagerViewModel.SelectedDevice.AppId}" />
-                        <Run Text="{Binding DeviceManagerViewModel.SelectedDevice.FirmwareVersionString}" />
-                    </ui:TextBlock>
+                <StackPanel>
+                    <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource TextFillColorTertiaryBrush}" Visibility="{Binding DeviceManagerViewModel.SelectedDevice, Converter={StaticResource NullToVisibilityConverter}}">
+                        <StackPanel Margin="10,5">
+                            <ui:TextBlock Text="Ausgewähltes Gerät" FontWeight="Bold" />
+                            <ui:TextBlock>
+                                <Run Text="{Binding DeviceManagerViewModel.SelectedDevice.Address}" />
+                                <Run Text="{Binding DeviceManagerViewModel.SelectedDevice.FirmwareName}" />
+                            </ui:TextBlock>
+                            <ui:TextBlock>
+                                <Run Text="{Binding DeviceManagerViewModel.SelectedDevice.AppId}" />
+                                <Run Text="{Binding DeviceManagerViewModel.SelectedDevice.FirmwareVersionString}" />
+                            </ui:TextBlock>
+                        </StackPanel>
+                    </Border>
+                    <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource TextFillColorTertiaryBrush}" Visibility="{Binding ActionsViewModel.CurrentAction, Converter={StaticResource NullToVisibilityConverter}}">
+                        <StackPanel Margin="10,5">
+                            <ui:TextBlock Text="Aktuelle Aktion" FontWeight="Bold" />
+                            <ui:TextBlock Text="{Binding ActionsViewModel.CurrentAction.Name}" />
+                            <ProgressBar Value="{Binding ActionsViewModel.CurrentAction.Progress}" IsIndeterminate="{Binding ActionsViewModel.CurrentAction.IsIndeterminate}" Maximum="100" />
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </ui:NavigationView.PaneFooter>
             <ui:NavigationView.FooterMenuItems>

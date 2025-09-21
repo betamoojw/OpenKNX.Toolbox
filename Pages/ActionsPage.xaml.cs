@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenKNX.Toolbox.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,7 @@ namespace OpenKNX.Toolbox.Pages
         public ActionsPage()
         {
             InitializeComponent();
+            this.DataContext = ActionsViewModel.Instanz;
         }
     }
 }

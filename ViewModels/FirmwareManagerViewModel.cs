@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,6 +46,21 @@ namespace OpenKNX.Toolbox.ViewModels
         {
             MainViewModel.Instanz.PropertyChanged += Instanz_PropertyChanged;
             await UpdateFirmwareList();
+            UpdateLocalList();
+        }
+
+        public void UpdateLocalList()
+        {
+            foreach(var app in Applications)
+            {
+                foreach(var release in app.Releases)
+                {
+                    string releasePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                    releasePath = Path.Combine(releasePath, "OpenKNX.Toolbox", "Firmware", app.AppId, release.Version.ToString());
+
+                    release.IsLocalAvailable = Directory.Exists(releasePath);
+                }
+            }
         }
 
         public async Task UpdateFirmwareList()
@@ -59,7 +75,7 @@ namespace OpenKNX.Toolbox.ViewModels
 
                 foreach(var rel in app.Releases)
                 {
-                    ReleaseModel releaseModel = new(rel);
+                    ReleaseModel releaseModel = new(rel, appModel.AppId);
                     appModel.Releases.Add(releaseModel);
                 }
 
@@ -70,12 +86,6 @@ namespace OpenKNX.Toolbox.ViewModels
         private void Changed(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        [RelayCommand]
-        public  void DownloadRelease()
-        {
-            ActionsViewModel.Instanz.Actions.Add("Downloading");
         }
     }
 }

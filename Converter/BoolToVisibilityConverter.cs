@@ -15,9 +15,9 @@ namespace OpenKNX.Toolbox.Converter
             if(value is bool boolValue)
             {
                 if(parameter != null)
-                    return !boolValue ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+                    return !boolValue ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
                 else
-                    return boolValue ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+                    return boolValue ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             }
             return System.Windows.Visibility.Collapsed;
         }

@@ -3,20 +3,40 @@
   "WorkspaceRootPath": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|c:\\users\\mikeg\\sources\\repos\\openknx.toolbox\\models\\releasemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|solutionrelative:models\\releasemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|c:\\users\\mikeg\\sources\\repos\\openknx.toolbox\\pages\\firmwaremanagerpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|solutionrelative:pages\\firmwaremanagerpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|c:\\users\\mikeg\\sources\\repos\\openknx.toolbox\\converter\\booltovisibilityconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|solutionrelative:converter\\booltovisibilityconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|c:\\users\\mikeg\\sources\\repos\\openknx.toolbox\\viewmodels\\firmwaremanagerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|solutionrelative:viewmodels\\firmwaremanagerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|c:\\users\\mikeg\\sources\\repos\\openknx.toolbox\\models\\applicationmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|solutionrelative:models\\applicationmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|c:\\users\\mikeg\\sources\\repos\\openknx.toolbox\\classes\\actions\\downloadaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|solutionrelative:classes\\actions\\downloadaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|c:\\users\\mikeg\\sources\\repos\\openknx.toolbox\\models\\releasemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|solutionrelative:models\\releasemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|c:\\users\\mikeg\\sources\\repos\\openknx.toolbox\\viewmodels\\actionsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|solutionrelative:viewmodels\\actionsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|c:\\users\\mikeg\\sources\\repos\\openknx.toolbox\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|c:\\users\\mikeg\\sources\\repos\\openknx.toolbox\\pages\\actionspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|solutionrelative:pages\\actionspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|c:\\users\\mikeg\\sources\\repos\\openknx.toolbox\\classes\\actions\\iaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B66046C2-E2FB-C204-E113-0EE1774C24FB}|OpenKNX.Toolbox.csproj|solutionrelative:classes\\actions\\iaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,50 +46,113 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
+              "Title": "BoolToVisibilityConverter.cs",
+              "DocumentMoniker": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\Converter\\BoolToVisibilityConverter.cs",
+              "RelativeDocumentMoniker": "Converter\\BoolToVisibilityConverter.cs",
+              "ToolTip": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\Converter\\BoolToVisibilityConverter.cs",
+              "RelativeToolTip": "Converter\\BoolToVisibilityConverter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAABuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-21T18:42:58.619Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "MainWindow.xaml",
+              "ToolTip": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\MainWindow.xaml",
+              "RelativeToolTip": "MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-09-21T17:56:22.512Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IAction.cs",
+              "DocumentMoniker": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\Classes\\Actions\\IAction.cs",
+              "RelativeDocumentMoniker": "Classes\\Actions\\IAction.cs",
+              "ToolTip": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\Classes\\Actions\\IAction.cs",
+              "RelativeToolTip": "Classes\\Actions\\IAction.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-21T17:51:04.125Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DownloadAction.cs",
+              "DocumentMoniker": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\Classes\\Actions\\DownloadAction.cs",
+              "RelativeDocumentMoniker": "Classes\\Actions\\DownloadAction.cs",
+              "ToolTip": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\Classes\\Actions\\DownloadAction.cs",
+              "RelativeToolTip": "Classes\\Actions\\DownloadAction.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAowFsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-21T17:34:12.651Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ActionsPage.xaml",
+              "DocumentMoniker": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\Pages\\ActionsPage.xaml",
+              "RelativeDocumentMoniker": "Pages\\ActionsPage.xaml",
+              "ToolTip": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\Pages\\ActionsPage.xaml",
+              "RelativeToolTip": "Pages\\ActionsPage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-09-21T17:24:04.908Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ActionsViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\ViewModels\\ActionsViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\ActionsViewModel.cs",
+              "ToolTip": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\ViewModels\\ActionsViewModel.cs",
+              "RelativeToolTip": "ViewModels\\ActionsViewModel.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAAEAAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-21T17:23:28.688Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "ReleaseModel.cs",
               "DocumentMoniker": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\Models\\ReleaseModel.cs",
               "RelativeDocumentMoniker": "Models\\ReleaseModel.cs",
               "ToolTip": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\Models\\ReleaseModel.cs",
               "RelativeToolTip": "Models\\ReleaseModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAoAAAARAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwBMAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-14T15:17:23.933Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ApplicationModel.cs",
-              "DocumentMoniker": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\Models\\ApplicationModel.cs",
-              "RelativeDocumentMoniker": "Models\\ApplicationModel.cs",
-              "ToolTip": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\Models\\ApplicationModel.cs",
-              "RelativeToolTip": "Models\\ApplicationModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwA4AAAAbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-14T15:17:15.855Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "FirmwareManagerViewModel.cs",
               "DocumentMoniker": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\ViewModels\\FirmwareManagerViewModel.cs",
               "RelativeDocumentMoniker": "ViewModels\\FirmwareManagerViewModel.cs",
               "ToolTip": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\ViewModels\\FirmwareManagerViewModel.cs",
               "RelativeToolTip": "ViewModels\\FirmwareManagerViewModel.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAsAAAAdAAAAAAAAAA==",
+              "ViewState": "AgIAABAAAAAAAAAAAAA0wD0AAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-14T15:13:42.605Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "FirmwareManagerPage.xaml",
               "DocumentMoniker": "C:\\Users\\mikeg\\sources\\repos\\OpenKNX.Toolbox\\Pages\\FirmwareManagerPage.xaml",
               "RelativeDocumentMoniker": "Pages\\FirmwareManagerPage.xaml",

@@ -12,7 +12,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="FirmwareManagerPage"
-      Name="PageControl">
+      x:Name="PageControl">
     <Page.Resources>
         <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <conv:BoolToFloatConverter x:Key="BoolToOpacityConverter" TrueValue="1" FalseValue="0.5" />
@@ -46,9 +46,19 @@
                     <Grid Margin="10,5" Opacity="{Binding IsLocalAvailable, Converter={StaticResource BoolToOpacityConverter}}">
                         <Grid.ContextMenu>
                             <ContextMenu>
-                                <ui:MenuItem Header="Herunterladen" Command="{Binding DataContext.DownloadReleaseCommand, ElementName=PageControl}" Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=true}">
+                                <ui:MenuItem Header="Herunterladen" Command="{Binding DownloadReleaseCommand}" Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=true}">
                                     <ui:MenuItem.Icon>
                                         <ui:SymbolIcon Symbol="ArrowDownload24" />
+                                    </ui:MenuItem.Icon>
+                                </ui:MenuItem>
+                                <ui:MenuItem Header="Knxprod erstellen" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Command="{Binding DeleteReleaseCommand}" Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <ui:MenuItem.Icon>
+                                        <ui:SymbolIcon Symbol="Box24" />
+                                    </ui:MenuItem.Icon>
+                                </ui:MenuItem>
+                                <ui:MenuItem Header="Löschen" Foreground="Red" Command="{Binding DeleteReleaseCommand}" Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <ui:MenuItem.Icon>
+                                        <ui:SymbolIcon Symbol="Delete24" />
                                     </ui:MenuItem.Icon>
                                 </ui:MenuItem>
                             </ContextMenu>
