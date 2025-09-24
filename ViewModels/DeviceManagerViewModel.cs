@@ -1,4 +1,5 @@
 ﻿using OpenKNX.Toolbox.Models;
+using OpenKNX.Toolbox.Lib.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Management.Automation;
@@ -21,6 +22,7 @@ namespace OpenKNX.Toolbox.ViewModels
             {
                 _selectedDevice = value;
                 Changed("SelectedDevice");
+                FirmwareManagerViewModel.Instanz.SelectedApplication = value?.AppId ?? string.Empty;
             }
         }
 

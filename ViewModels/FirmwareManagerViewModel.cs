@@ -1,7 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
 using OpenKNX.Toolbox;
+using OpenKNX.Toolbox.Classes.Actions;
+using OpenKNX.Toolbox.Dialogs;
 using OpenKNX.Toolbox.Lib.Data;
 using OpenKNX.Toolbox.Lib.Helper;
+using OpenKNX.Toolbox.Lib.Platforms;
 using OpenKNX.Toolbox.Models;
 using System;
 using System.Collections.Generic;
@@ -11,6 +15,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using Wpf.Ui;
 
 namespace OpenKNX.Toolbox.ViewModels
 {
@@ -56,9 +62,14 @@ namespace OpenKNX.Toolbox.ViewModels
                 foreach(var release in app.Releases)
                 {
                     string releasePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                    releasePath = Path.Combine(releasePath, "OpenKNX.Toolbox", "Firmware", app.AppId, release.Version.ToString());
+                    releasePath = Path.Combine(releasePath, "OpenKNX", "Firmware", app.AppId, release.Version.ToString());
 
                     release.IsLocalAvailable = Directory.Exists(releasePath);
+
+                    if(release.IsLocalAvailable)
+                    {
+                        release.ContentModel = ReleaseContentHelper.GetReleaseContent(releasePath, release.Version);
+                    }
                 }
             }
         }
@@ -81,6 +92,51 @@ namespace OpenKNX.Toolbox.ViewModels
 
                 Applications.Add(appModel);
             }
+
+            UpdateLocalList();
+        }
+
+        public void DeleteLocalRelease(ReleaseModel release)
+        {
+            string releasePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            releasePath = Path.Combine(releasePath, "OpenKNX", "Firmware", release.AppId, release.Version.ToString());
+            if(Directory.Exists(releasePath))
+            {
+                try
+                {
+                    Directory.Delete(releasePath, true);
+                    release.IsLocalAvailable = false;
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show($"Fehler beim Löschen des Firmware-Verzeichnisses:\n{ex.Message}", "Fehler", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                }
+            }
+        }
+
+        [RelayCommand]
+        public async Task FlashRelease(Product product)
+        {
+            CancellationTokenSource token = new CancellationTokenSource();
+
+            FlashSelectDialog flashSelectDialog = new(product.Architecture, product.AppId);
+
+            await MainViewModel.Instanz.ContentDialogService.ShowAsync(
+                flashSelectDialog,
+                token.Token
+            );
+
+            PlatformDevice? device = flashSelectDialog.GetSelectedDevice();
+            if (device != null)
+            {
+                ActionsViewModel.Instanz.AddAction(new FlashAction(device, product));
+            }
+        }
+
+        [RelayCommand]
+        public async Task ReloadFirmwares()
+        {
+            await UpdateFirmwareList();
         }
 
         private void Changed(string name)

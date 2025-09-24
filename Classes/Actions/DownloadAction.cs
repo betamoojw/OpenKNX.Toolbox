@@ -15,6 +15,8 @@ namespace OpenKNX.Toolbox.Classes.Actions
 {
     public class DownloadAction : IAction, INotifyPropertyChanged
     {
+        public string ActionName { get; } = "Release herunterladen";
+
         public string Name { get; }
 
         private int _progress = 0;

@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:OpenKNX.Toolbox.Pages"
       xmlns:vm="clr-namespace:OpenKNX.Toolbox.ViewModels"
       xmlns:models="clr-namespace:OpenKNX.Toolbox.Models"
+      xmlns:libmodels="clr-namespace:OpenKNX.Toolbox.Lib.Models;assembly=OpenKNX.Toolbox.Lib"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:conv="clr-namespace:OpenKNX.Toolbox.Converter"
       mc:Ignorable="d" 
@@ -28,7 +29,7 @@
 
         <ui:ListView Grid.Row="1" ItemsSource="{Binding DeviceModels}" SelectedItem="{Binding SelectedDevice}">
             <ui:ListView.ItemTemplate>
-                <DataTemplate DataType="{x:Type models:DeviceModel}">
+                <DataTemplate DataType="{x:Type libmodels:DeviceModel}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />

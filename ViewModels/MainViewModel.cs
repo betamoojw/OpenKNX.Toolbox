@@ -9,6 +9,8 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using Wpf.Ui;
 using Wpf.Ui.Controls;
 
 namespace OpenKNX.Toolbox.ViewModels
@@ -26,8 +28,6 @@ namespace OpenKNX.Toolbox.ViewModels
             }
         }
 
-
-
         public ActionsViewModel ActionsViewModel
         {
             get { return ActionsViewModel.Instanz; }
@@ -38,6 +38,9 @@ namespace OpenKNX.Toolbox.ViewModels
             get { return DeviceManagerViewModel.Instanz; }
         }
 
+        public ContentDialogService ContentDialogService { get; } = new ContentDialogService();
+        public SnackbarService SnackbarService { get; } = new SnackbarService();
+
         public string Title
         {
             get {
@@ -46,11 +49,7 @@ namespace OpenKNX.Toolbox.ViewModels
                 if (assembly == null) return title;
                 var vers = assembly.GetName().Version;
                 if (vers == null) return title;
-                int showVersions = 3;
-#if DEBUG
-                showVersions = 4;
-#endif
-                title += " - v" + string.Join('.', vers.ToString().Split('.').Take(showVersions));
+                title += " - v" + string.Join('.', vers.ToString().Split('.').Take(4));
                 return title;
             }
         }
@@ -73,6 +72,22 @@ namespace OpenKNX.Toolbox.ViewModels
                 _selectedDevice = value;
                 Changed("SelectedDevice");
             }
+        }
+
+        public void SetContentPresenterDialog(ContentPresenter presenter)
+        {
+            ContentDialogService.SetDialogHost(presenter);
+        }
+
+        public void SetContentPresenterSnackbar(SnackbarPresenter presenter)
+        {
+            SnackbarService.SetSnackbarPresenter(presenter);
+        }
+
+        public void ShowError(string title, string message, int timeout = 5)
+        {
+            TimeSpan _timeout = TimeSpan.FromSeconds(timeout);
+            SnackbarService.Show(title, message, ControlAppearance.Caution, null, _timeout);
         }
 
         private void Changed(string name)

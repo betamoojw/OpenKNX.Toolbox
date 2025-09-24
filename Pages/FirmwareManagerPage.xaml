@@ -24,11 +24,17 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="400" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <ComboBox x:Name="AppList" ItemsSource="{Binding Applications}" SelectedValue="{Binding SelectedApplication}" SelectedValuePath="AppId">
+        <ui:Button Command="{Binding ReloadFirmwaresCommand}" Background="{DynamicResource AccentTextFillColorPrimaryBrush}" Margin="1" VerticalAlignment="Stretch">
+            <ui:Button.Icon>
+                <ui:SymbolIcon Symbol="ArrowClockwise24" />
+            </ui:Button.Icon>
+        </ui:Button>
+        
+        <ComboBox Grid.Column="1" x:Name="AppList" ItemsSource="{Binding Applications}" SelectedValue="{Binding SelectedApplication}" SelectedValuePath="AppId" Margin="1">
             <ComboBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type libmodels:Application}">
                     <TextBlock>
@@ -51,12 +57,24 @@
                                         <ui:SymbolIcon Symbol="ArrowDownload24" />
                                     </ui:MenuItem.Icon>
                                 </ui:MenuItem>
-                                <ui:MenuItem Header="Knxprod erstellen" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Command="{Binding DeleteReleaseCommand}" Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <ui:MenuItem Header="Knxprod erstellen" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Command="{Binding CreateKnxprodCommand}" CommandParameter="{Binding .}"  Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <ui:MenuItem.Icon>
                                         <ui:SymbolIcon Symbol="Box24" />
                                     </ui:MenuItem.Icon>
                                 </ui:MenuItem>
-                                <ui:MenuItem Header="Löschen" Foreground="Red" Command="{Binding DeleteReleaseCommand}" Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <ui:MenuItem x:Name="FlashMenuItem" Header="Auf Gerät flashen" ItemsSource="{Binding ContentModel.Products}" Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <ui:MenuItem.Icon>
+                                        <ui:SymbolIcon Symbol="SendCopy24" />
+                                    </ui:MenuItem.Icon>
+                                    <MenuItem.ItemContainerStyle>
+                                        <Style TargetType="MenuItem">
+                                            <Setter Property="Command" Value="{Binding DataContext.FlashReleaseCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Page}}" />
+                                            <Setter Property="CommandParameter" Value="{Binding .}" />
+                                            <Setter Property="Header" Value="{Binding Name}" />
+                                        </Style>
+                                    </MenuItem.ItemContainerStyle>
+                                </ui:MenuItem>
+                                <ui:MenuItem Header="Löschen" Foreground="IndianRed" Command="{Binding DeleteReleaseCommand}" Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <ui:MenuItem.Icon>
                                         <ui:SymbolIcon Symbol="Delete24" />
                                     </ui:MenuItem.Icon>

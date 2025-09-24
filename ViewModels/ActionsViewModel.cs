@@ -61,7 +61,13 @@ namespace OpenKNX.Toolbox.ViewModels
                 Actions.Remove(CurrentAction);
 
                 _currentActionToken = new();
-                await CurrentAction.Begin(_currentActionToken.Token);
+                try
+                {
+                    await CurrentAction.Begin(_currentActionToken.Token);
+                } catch(Exception ex)
+                {
+                    MainViewModel.Instanz.ShowError("Action Error", ex.Message);
+                }
                 CurrentAction = null;
             }
         }

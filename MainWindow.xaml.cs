@@ -24,6 +24,7 @@ public partial class MainWindow : FluentWindow
         this.DataContext = ViewModels.MainViewModel.Instanz;
         _ = ViewModels.MainViewModel.Instanz.Init();
 
-
+        ViewModels.MainViewModel.Instanz.SetContentPresenterDialog(MainContentPresenter);
+        ViewModels.MainViewModel.Instanz.SetContentPresenterSnackbar(MainSnackbarPresenter);
     }
 }

@@ -8,6 +8,7 @@ namespace OpenKNX.Toolbox.Classes.Actions
 {
     public interface IAction
     {
+        public string ActionName { get; }
         public string Name { get; }
         public int Progress { get; set; }
         public bool IsIndeterminate { get; set; }

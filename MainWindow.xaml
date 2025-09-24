@@ -22,7 +22,11 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Title="{Binding Title}" Icon="Assets\openknx_light.ico" />
+        <ui:TitleBar Title="{Binding Title}">
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="/Assets/openknx_file.ico" />
+            </ui:TitleBar.Icon>
+        </ui:TitleBar>
 
         <ui:NavigationView x:Name="RootNavigationView" Grid.Row="1" IsBackButtonVisible="Collapsed">
             <ui:NavigationView.MenuItems>
@@ -71,6 +75,7 @@
                     <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource TextFillColorTertiaryBrush}" Visibility="{Binding ActionsViewModel.CurrentAction, Converter={StaticResource NullToVisibilityConverter}}">
                         <StackPanel Margin="10,5">
                             <ui:TextBlock Text="Aktuelle Aktion" FontWeight="Bold" />
+                            <ui:TextBlock Text="{Binding ActionsViewModel.CurrentAction.ActionName}" />
                             <ui:TextBlock Text="{Binding ActionsViewModel.CurrentAction.Name}" />
                             <ProgressBar Value="{Binding ActionsViewModel.CurrentAction.Progress}" IsIndeterminate="{Binding ActionsViewModel.CurrentAction.IsIndeterminate}" Maximum="100" />
                         </StackPanel>
@@ -89,5 +94,8 @@
             </ui:NavigationView.FooterMenuItems>
 
         </ui:NavigationView>
+
+        <ui:SnackbarPresenter x:Name="MainSnackbarPresenter" Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom" />
+        <ContentPresenter x:Name="MainContentPresenter" Grid.Row="1" />
     </Grid>
 </ui:FluentWindow>
