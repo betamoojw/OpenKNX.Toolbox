@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Management.Automation;
 using Tmds.MDns;
 using Wpf.Ui.Controls;
+using OpenKNX.Toolbox.Lib.Helper;
+using System.Diagnostics.Eventing.Reader;
 
 namespace OpenKNX.Toolbox.ViewModels
 {
@@ -70,7 +72,6 @@ namespace OpenKNX.Toolbox.ViewModels
                 IsIP = true
             };
 
-
             foreach (string txt in e.Announcement.Txt)
             {
                 if (!txt.Contains("="))
@@ -94,6 +95,8 @@ namespace OpenKNX.Toolbox.ViewModels
                         model.AppId = value;
                         if (AppToImage.ContainsKey(value))
                             model.ImageUrl = AppToImage[value];
+                        else
+                            model.ImageUrl = "http://icon-library.com/images/placeholder-icon/placeholder-icon-15.jpg";
                         break;
                     case "version":
                         model.FirmwareVersion = new SemanticVersion(value);
@@ -108,6 +111,13 @@ namespace OpenKNX.Toolbox.ViewModels
             if (DeviceModels.Any(d => d.SerialNumber == model.SerialNumber))
                 return;
 
+            if (model.Port == 2040)
+                model.Architecture = Lib.Data.ArchitectureType.RP2040;
+            else if (model.Port == 3232)
+                model.Architecture = Lib.Data.ArchitectureType.ESP32;
+            else
+                MainViewModel.Instanz.ShowError("Unbekannter Port", "Von einem Gerät wurde ein unbekannter Port angegeben: " + model.Port);
+
             ApplicationModel? app = FirmwareManagerViewModel.Instanz.Applications.FirstOrDefault(a => a.AppId == model.AppId);
             if (app != null)
             {
@@ -115,9 +125,14 @@ namespace OpenKNX.Toolbox.ViewModels
                 model.UpdateVersion = GetNewstVersion(app, model.FirmwareVersion);
                 if(model.UpdateVersion != null)
                     model.UpdateVersionString = model.UpdateVersion.ToString();
+            } else
+            {
+                RepositoryMapping? map = GitHubAccess.GetRepoMappingByAppId(model.AppId);
+                if(map != null)
+                    model.FirmwareName = map.Name;
             }
 
-            DeviceModels.Add(model);
+                DeviceModels.Add(model);
 
             UpdateUpdatesAvailable();
         }
@@ -141,18 +156,6 @@ namespace OpenKNX.Toolbox.ViewModels
         private void UpdateUpdatesAvailable()
         {
             UpdatesAvailable = DeviceModels.Count(d => d.UpdateVersion != null);
-        }
-
-        private async Task OnShowSignInContentDialog()
-        {
-            var uiMessageBox = new Wpf.Ui.Controls.MessageBox
-            {
-                Title = "WPF UI Message Box",
-                Content =
-                "Never gonna give you up, never gonna let you down Never gonna run around and desert you Never gonna make you cry, never gonna say goodbye",
-            };
-
-            _ = await uiMessageBox.ShowDialogAsync();
         }
 
         private void Changed(string name)

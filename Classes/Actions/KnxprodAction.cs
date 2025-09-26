@@ -41,7 +41,7 @@ namespace OpenKNX.Toolbox.Classes.Actions
 
         private string _xmlPath = string.Empty;
         private string _outputPath = string.Empty;
-        private CancellationToken? _token = null;
+        private CancellationToken _token = default;
 
 
         public KnxprodAction(string name, string xmlPath, string output)
@@ -75,7 +75,7 @@ namespace OpenKNX.Toolbox.Classes.Actions
             if (workingDir == null)
                 throw new Exception("Could not retrieve workingdir: " + _xmlPath);
 
-            await Sign.SignHelper.ExportKnxprodAsync(workingDir, _outputPath, _xmlPath, "", false, false);
+            await Sign.SignHelper.ExportKnxprodAsync(workingDir, _outputPath, _xmlPath, "", false, false, _token);
         }
     }
 }

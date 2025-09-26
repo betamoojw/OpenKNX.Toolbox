@@ -1,4 +1,5 @@
-﻿using OpenKNX.Toolbox.Classes.Actions;
+﻿using CommunityToolkit.Mvvm.Input;
+using OpenKNX.Toolbox.Classes.Actions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace OpenKNX.Toolbox.ViewModels
 {
-    public class ActionsViewModel : INotifyPropertyChanged
+    public partial class ActionsViewModel : INotifyPropertyChanged
     {
         public static ActionsViewModel Instanz { get; } = new ActionsViewModel();
 
@@ -72,6 +73,7 @@ namespace OpenKNX.Toolbox.ViewModels
             }
         }
 
+        [RelayCommand]
         public void CancelAction()
         {
             _currentActionToken?.Cancel();

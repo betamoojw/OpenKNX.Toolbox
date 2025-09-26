@@ -74,6 +74,11 @@
                                         </Style>
                                     </MenuItem.ItemContainerStyle>
                                 </ui:MenuItem>
+                                <ui:MenuItem Header="Release-Notes öffnen" Command="{Binding OpenReleaseNotesCommand}">
+                                    <ui:MenuItem.Icon>
+                                        <ui:SymbolIcon Symbol="Notepad24" />
+                                    </ui:MenuItem.Icon>
+                                </ui:MenuItem>
                                 <ui:MenuItem Header="Löschen" Foreground="IndianRed" Command="{Binding DeleteReleaseCommand}" Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <ui:MenuItem.Icon>
                                         <ui:SymbolIcon Symbol="Delete24" />
@@ -86,7 +91,10 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <ui:TextBlock Text="{Binding VersionString}" FontSize="20" />
+                        <StackPanel>
+                            <ui:TextBlock Text="{Binding VersionString}" FontSize="20" />
+                            <ui:TextBlock Text="{Binding Name}" FontSize="11" />
+                        </StackPanel>
                         <ui:TextBlock Text="PreRelease" FontSize="20" Grid.Column="1" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Visibility="{Binding IsPrerelease, Converter={StaticResource BoolToVisibilityConverter}}" />
                     </Grid>
                 </DataTemplate>

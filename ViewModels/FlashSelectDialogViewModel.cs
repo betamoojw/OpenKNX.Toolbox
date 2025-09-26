@@ -2,10 +2,12 @@
 using OpenKNX.Toolbox.Lib.Helper;
 using OpenKNX.Toolbox.Lib.Models;
 using OpenKNX.Toolbox.Lib.Platforms;
+using OpenKNX.Toolbox.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,9 +63,9 @@ namespace OpenKNX.Toolbox.ViewModels
             {
                 if (device.AppId == appId)
                 {
-                    if (device.IsIP && arch == ArchitectureType.ESP32)
+                    if (device.IsIP)
                         Devices.Add(new(ArchitectureType.ESP32, device.Name, $"{device.IP}:{device.Port}", "ota"));
-                    else if(!device.IsIP)
+                    else
                         Devices.Add(new(ArchitectureType.ESP32, device.Name, device.Address, "bus"));
                 }
             }

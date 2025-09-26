@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,7 +45,7 @@ namespace OpenKNX.Toolbox.Classes.Actions
 
         private PlatformDevice _device;
         private Product _product;
-        private CancellationToken? _token = null;
+        private CancellationToken _token = default;
 
         public FlashAction(PlatformDevice device, Product product)
         {
@@ -78,7 +79,7 @@ namespace OpenKNX.Toolbox.Classes.Actions
                 {
                     IsIndeterminate = true;
                 }
-            }));
+            }), _token);
         }
     }
 }

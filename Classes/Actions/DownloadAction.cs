@@ -43,7 +43,7 @@ namespace OpenKNX.Toolbox.Classes.Actions
 
         private string _downloadUrl = string.Empty;
         private string _destinationPath = string.Empty;
-        private CancellationToken? _token = null;
+        private CancellationToken _token = default;
 
 
         public DownloadAction(string name, string url, string destination)
@@ -77,12 +77,16 @@ namespace OpenKNX.Toolbox.Classes.Actions
 
             using (HttpClient client = new HttpClient())
             {
-                var response = await client.GetAsync(_downloadUrl);
+                var response = await client.GetAsync(_downloadUrl, _token);
+                if (_token.IsCancellationRequested)
+                    return;
                 response.EnsureSuccessStatusCode();
 
                 using (var fs = new FileStream(_destinationPath, FileMode.Create))
                 {
-                    await response.Content.CopyToAsync(fs);
+                    await response.Content.CopyToAsync(fs, _token);
+                    if (_token.IsCancellationRequested)
+                        return;
                 }
             }
 
@@ -93,11 +97,6 @@ namespace OpenKNX.Toolbox.Classes.Actions
             File.Delete(_destinationPath);
 
             FirmwareManagerViewModel.Instanz.UpdateLocalList();
-        }
-
-        public Task Cancel()
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -7,6 +7,7 @@ using OpenKNX.Toolbox.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
@@ -22,6 +23,7 @@ namespace OpenKNX.Toolbox.Models
         public string Name { get; set; } = string.Empty;
         public DateTime PublishedAt { get; set; }
         public string FileUrl { get; set; } = string.Empty;
+        public string NoteUrl { get; set; } = string.Empty;
         public bool IsPrerelease { get; set; } = false;
         public SemanticVersion Version { get; set; }
         public string VersionString { get; set; } = string.Empty;
@@ -54,6 +56,7 @@ namespace OpenKNX.Toolbox.Models
             Name = release.Name;
             PublishedAt = release.PublishedAt;
             FileUrl = release.FileUrl;
+            NoteUrl = release.NotesUrl;
             IsPrerelease = release.IsPrerelease;
             Version = release.Version ?? new SemanticVersion(0);
             VersionString = Version?.ToString() ?? "Unbekannt";
@@ -86,6 +89,15 @@ namespace OpenKNX.Toolbox.Models
             FirmwareManagerViewModel.Instanz.DeleteLocalRelease(this);
         }
 
+        [RelayCommand]
+        public void OpenReleaseNotes()
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = NoteUrl,
+                UseShellExecute = true // wichtig für .NET Core / .NET 5+
+            });
+        }
 
         [RelayCommand]
         public void CreateKnxprod()

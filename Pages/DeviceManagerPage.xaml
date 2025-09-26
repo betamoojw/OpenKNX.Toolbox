@@ -14,6 +14,7 @@
       Title="DeviceManagerPage">
     <Page.Resources>
         <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Page.Resources>
 
     <Grid>
@@ -29,27 +30,42 @@
 
         <ui:ListView Grid.Row="1" ItemsSource="{Binding DeviceModels}" SelectedItem="{Binding SelectedDevice}">
             <ui:ListView.ItemTemplate>
-                <DataTemplate DataType="{x:Type libmodels:DeviceModel}">
+                <DataTemplate DataType="{x:Type models:DeviceModel}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Image Source="{Binding ImageUrl}" Width="100" Height="100" Margin="5"/>
+                        <Grid.ContextMenu>
+                            <ContextMenu>
+                                <ui:MenuItem Header="Webseite aufrufen" Command="{Binding DoOpenWebsiteCommand}" Visibility="{Binding IsIP, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <ui:MenuItem.Icon>
+                                        <ui:SymbolIcon Symbol="Globe24" />
+                                    </ui:MenuItem.Icon>
+                                </ui:MenuItem>
+                                <ui:MenuItem Header="Aktualisieren" Command="{Binding DoUpdateCommand}" Foreground="Green" Visibility="{Binding UpdateVersion, Converter={StaticResource NullToVisibilityConverter}}">
+                                    <ui:MenuItem.Icon>
+                                        <ui:SymbolIcon Symbol="ArrowExportUp24" />
+                                    </ui:MenuItem.Icon>
+                                </ui:MenuItem>
+                            </ContextMenu>
+                        </Grid.ContextMenu>
+
+                        <Image Source="{Binding ImageUrl}" Width="100" Height="100" Margin="5,5,15,5"/>
 
                         <StackPanel Grid.Column="1">
                             <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" Margin="0,5,0,10" />
                             <TextBlock>
-                        <Run Text="{Binding Address}" />
-                        <Run Text="{Binding IP}" />
-                            </TextBlock>
-                            <TextBlock>
-                        <Run Text="{Binding FirmwareName}" />
-                        <Run Text="[" />
-                        <Run Text="{Binding AppId}" />
-                        <Run Text="]" />
-                        <Run Text="{Binding FirmwareVersionString}" />
+                                <Run Text="{Binding Address}" />
+                                <Run Text="{Binding IP}" />
+                                    </TextBlock>
+                                    <TextBlock>
+                                <Run Text="{Binding FirmwareName}" />
+                                <Run Text="[" />
+                                <Run Text="{Binding AppId}" />
+                                <Run Text="]" />
+                                <Run Text="{Binding FirmwareVersionString}" />
                             </TextBlock>
                             <TextBlock Text="{Binding SerialNumber}" />
                         </StackPanel>

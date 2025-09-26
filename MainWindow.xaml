@@ -72,14 +72,23 @@
                             </ui:TextBlock>
                         </StackPanel>
                     </Border>
-                    <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource TextFillColorTertiaryBrush}" Visibility="{Binding ActionsViewModel.CurrentAction, Converter={StaticResource NullToVisibilityConverter}}">
-                        <StackPanel Margin="10,5">
-                            <ui:TextBlock Text="Aktuelle Aktion" FontWeight="Bold" />
-                            <ui:TextBlock Text="{Binding ActionsViewModel.CurrentAction.ActionName}" />
-                            <ui:TextBlock Text="{Binding ActionsViewModel.CurrentAction.Name}" />
-                            <ProgressBar Value="{Binding ActionsViewModel.CurrentAction.Progress}" IsIndeterminate="{Binding ActionsViewModel.CurrentAction.IsIndeterminate}" Maximum="100" />
+                    <Grid Visibility="{Binding ActionsViewModel.CurrentAction, Converter={StaticResource NullToVisibilityConverter}}">
+                        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource TextFillColorTertiaryBrush}">
+                            <StackPanel Margin="10,5">
+                                <ui:TextBlock Text="Aktuelle Aktion" FontWeight="Bold" />
+                                <ui:TextBlock Text="{Binding ActionsViewModel.CurrentAction.ActionName}" />
+                                <ui:TextBlock Text="{Binding ActionsViewModel.CurrentAction.Name}" />
+                                <ProgressBar Value="{Binding ActionsViewModel.CurrentAction.Progress}" IsIndeterminate="{Binding ActionsViewModel.CurrentAction.IsIndeterminate}" Maximum="100" />
+                            </StackPanel>
+                        </Border>
+                        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top">
+                            <ui:Button Command="{Binding ActionsViewModel.CancelActionCommand}" Background="IndianRed" Margin="1" VerticalAlignment="Stretch">
+                                <ui:Button.Icon>
+                                    <ui:SymbolIcon Symbol="Delete24" />
+                                </ui:Button.Icon>
+                            </ui:Button>
                         </StackPanel>
-                    </Border>
+                    </Grid>
                 </StackPanel>
             </ui:NavigationView.PaneFooter>
             <ui:NavigationView.FooterMenuItems>
