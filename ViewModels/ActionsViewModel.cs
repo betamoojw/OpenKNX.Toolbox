@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using OpenKNX.Toolbox.Classes.Actions;
+using OpenKNX.Toolbox.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,6 +18,7 @@ namespace OpenKNX.Toolbox.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public ObservableCollection<IAction> Actions { get; set; } = new();
+        public ObservableCollection<ActionHistory> History { get; set; } = new();
 
         private IAction? _currentAction = null;
         public IAction? CurrentAction
@@ -65,9 +67,11 @@ namespace OpenKNX.Toolbox.ViewModels
                 try
                 {
                     await CurrentAction.Begin(_currentActionToken.Token);
+                    History.Insert(0, new ActionHistory(CurrentAction));
                 } catch(Exception ex)
                 {
                     MainViewModel.Instanz.ShowError("Action Error", ex.Message);
+                    History.Insert(0, new ActionHistory(CurrentAction, ex.Message));
                 }
                 CurrentAction = null;
             }

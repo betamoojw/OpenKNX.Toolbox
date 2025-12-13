@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -137,6 +138,28 @@ namespace OpenKNX.Toolbox.ViewModels
         public async Task ReloadFirmwares()
         {
             await UpdateFirmwareList();
+        }
+
+        [RelayCommand]
+        public void OpenHelp(ApplicationModel application)
+        {
+            if (string.IsNullOrEmpty(application.HelpThread))
+                return;
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = application.HelpThread,
+                UseShellExecute = true // wichtig für .NET Core / .NET 5+
+            });
+        }
+
+        [RelayCommand]
+        public void OpenRepo(ApplicationModel application)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = $"https://github.com/OpenKNX/{application.Name}",
+                UseShellExecute = true // wichtig für .NET Core / .NET 5+
+            });
         }
 
         private void Changed(string name)

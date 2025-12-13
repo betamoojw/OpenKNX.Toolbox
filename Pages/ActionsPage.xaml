@@ -9,5 +9,30 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ActionsPage">
 
-    <ui:ListView ItemsSource="{Binding Actions}" DisplayMemberPath="Name" />
+
+    <TabControl>
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon Margin="0,0,6,0" Symbol="XboxConsole24" />
+                    <TextBlock Text="Wartende Aktionen" />
+                    <ui:InfoBadge Value="{Binding Actions.Count}" Margin="5,0,0,0" />
+                </StackPanel>
+            </TabItem.Header>
+            
+            <ui:ListView ItemsSource="{Binding Actions}" DisplayMemberPath="Name" />
+        </TabItem>
+
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon Margin="0,0,6,0" Symbol="XboxConsole24" />
+                    <TextBlock Text="Historie" />
+                    <ui:InfoBadge Value="{Binding History.Count}" Margin="5,0,0,0" />
+                </StackPanel>
+            </TabItem.Header>
+
+            <ui:ListView ItemsSource="{Binding History}" DisplayMemberPath="Action.ActionName" />
+        </TabItem>
+    </TabControl>
 </Page>

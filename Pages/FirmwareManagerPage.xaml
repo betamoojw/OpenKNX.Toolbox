@@ -16,25 +16,43 @@
     <Page.Resources>
         <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <conv:BoolToFloatConverter x:Key="BoolToOpacityConverter" TrueValue="1" FalseValue="0.5" />
+        <conv:NullOrEmptyToVisibilityConverter x:Key="NullOrEmptyToVisibilityConverter" />
+        <conv:NullOrEmptyToBoolConverter x:Key="NullOrEmptyToBoolConverter" />
+        <conv:NullToBoolConverter x:Key="NullToBoolConverter" />
     </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <ui:Button Command="{Binding ReloadFirmwaresCommand}" Background="{DynamicResource AccentTextFillColorPrimaryBrush}" Margin="1" VerticalAlignment="Stretch">
+        <ui:Button Command="{Binding ReloadFirmwaresCommand}" ToolTip="Liste neu laden" Background="{DynamicResource AccentTextFillColorPrimaryBrush}" Margin="1" VerticalAlignment="Stretch">
             <ui:Button.Icon>
                 <ui:SymbolIcon Symbol="ArrowClockwise24" />
             </ui:Button.Icon>
         </ui:Button>
-        
-        <ComboBox Grid.Column="1" x:Name="AppList" ItemsSource="{Binding Applications}" SelectedValue="{Binding SelectedApplication}" SelectedValuePath="AppId" Margin="1">
+
+        <ui:Button Grid.Column="1" Command="{Binding OpenHelpCommand}" CommandParameter="{Binding SelectedItem, ElementName=AppList}" ToolTip="Thread auf knx-user-forum.de öffnen" Margin="1" VerticalAlignment="Stretch" IsEnabled="{Binding SelectedItem.HelpThread, ElementName=AppList, Converter={StaticResource NullOrEmptyToBoolConverter}, ConverterParameter=true, FallbackValue=false}">
+            <ui:Button.Icon>
+                <ui:SymbolIcon Symbol="ChatHelp24" />
+            </ui:Button.Icon>
+        </ui:Button>
+
+        <ui:Button Grid.Column="2" Command="{Binding OpenRepoCommand}" CommandParameter="{Binding SelectedItem, ElementName=AppList}" ToolTip="Repository auf Github öffnen" Margin="1" VerticalAlignment="Stretch" IsEnabled="{Binding SelectedItem, ElementName=AppList, Converter={StaticResource NullToBoolConverter}, ConverterParameter=true, FallbackValue=false}">
+            <ui:Button.Icon>
+                <ui:SymbolIcon Symbol="Globe24" />
+            </ui:Button.Icon>
+        </ui:Button>
+
+        <ComboBox Grid.Column="3" x:Name="AppList" ItemsSource="{Binding Applications}" SelectedValue="{Binding SelectedApplication}" SelectedValuePath="AppId" Margin="1">
             <ComboBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type libmodels:Application}">
                     <TextBlock>
@@ -46,7 +64,9 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
 
-        <ui:ListView Grid.Row="1" Grid.ColumnSpan="5" ItemsSource="{Binding SelectedItem.Releases, ElementName=AppList}">
+        <ui:TextBlock Grid.Row="1" Grid.ColumnSpan="5" Text="{Binding SelectedItem.Description, ElementName=AppList}" Visibility="{Binding SelectedItem.Description, ElementName=AppList, Converter={StaticResource NullOrEmptyToVisibilityConverter}}" FontSize="16" Margin="5,10,0,5" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+
+        <ui:ListView Grid.Row="2" Grid.ColumnSpan="5" ItemsSource="{Binding SelectedItem.Releases, ElementName=AppList}">
             <ui:ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type libmodels:Application}">
                     <Grid Margin="10,5" Opacity="{Binding IsLocalAvailable, Converter={StaticResource BoolToOpacityConverter}}">

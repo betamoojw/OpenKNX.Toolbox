@@ -24,32 +24,29 @@ namespace OpenKNX.Toolbox.Dialogs
     /// <summary>
     /// Interaktionslogik für FlashSelectDialog.xaml
     /// </summary>
-    public partial class FlashSelectDialog : ContentDialog
+    public partial class ObjectSelectDialog : ContentDialog
     {
-        FlashSelectDialogViewModel ViewModel = new FlashSelectDialogViewModel();
-        ArchitectureType _architecture;
+        ObjectSelectDialogViewModel ViewModel = new ObjectSelectDialogViewModel();
 
-        public FlashSelectDialog(ArchitectureType arch, string appId)
+        public ObjectSelectDialog(string title, List<object> list)
         {
             InitializeComponent();
+            ViewModel.Items = list;
+            ViewModel.Title = title;
             this.DataContext = ViewModel;
 
-            _architecture = arch;
-
-            _ = ViewModel.UpdateDeviceList(_architecture, appId);
-
-            base.Closing += StringSelectDialog_Closing;
+            base.Closing += FlashSelectDialog_Closing;
         }
 
-        private void StringSelectDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        private void FlashSelectDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             if (args.Result != ContentDialogResult.Primary)
-                ViewModel.SelectedDevice = null;
+                ViewModel.SelectedItem = string.Empty;
         }
 
-        public PlatformDevice? GetSelectedDevice()
+        public object? GetSelectedItem()
         {
-            return ViewModel.SelectedDevice;
+            return ViewModel.SelectedItem;
         }
     }
 }

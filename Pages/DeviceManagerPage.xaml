@@ -23,10 +23,10 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Menu Foreground="White">
-            <!--<ui:MenuItem Header="Aktualisieren" Icon="{ui:SymbolIcon Symbol=ArrowClockwise24}" Command="{Binding Update}" />-->
+        <!--<Menu Foreground="White">
+            --><!--<ui:MenuItem Header="Aktualisieren" Icon="{ui:SymbolIcon Symbol=ArrowClockwise24}" Command="{Binding Update}" />--><!--
             <ui:MenuItem Header="Hinzufügen" Icon="{ui:SymbolIcon Symbol=Add24}" />
-        </Menu>
+        </Menu>-->
 
         <ui:ListView Grid.Row="1" ItemsSource="{Binding DeviceModels}" SelectedItem="{Binding SelectedDevice}">
             <ui:ListView.ItemTemplate>

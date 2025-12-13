@@ -12,6 +12,8 @@ namespace OpenKNX.Toolbox.Models
         public string AppId { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Label { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string HelpThread { get; set; } = string.Empty;
         public List<ReleaseModel> Releases { get; set; } = new();
 
         public ApplicationModel(Application app)
@@ -19,6 +21,8 @@ namespace OpenKNX.Toolbox.Models
             AppId = app.AppId;
             Name = app.Name;
             Label = app.Label;
+            Description = app.Description;
+            HelpThread = app.HelpThread;
         }
     }
 }

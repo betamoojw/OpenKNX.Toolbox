@@ -8,8 +8,8 @@
     <UseWPF>true</UseWPF>
 	  <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
 	<ApplicationIcon>Assets/openknx_file.ico</ApplicationIcon>
-	<ApplicationVersion>0.2.0.*</ApplicationVersion>
-	<ApplicationRevision>1</ApplicationRevision>
+	  <ApplicationVersion>0.3.0.0</ApplicationVersion>
+	  <Version>$(ApplicationVersion)</Version>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -23,8 +23,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Kaenx-Konnect\Kaenx.Konnect\Kaenx.Konnect.csproj" />
+    <ProjectReference Include="..\KnxFileTransferClient.Lib\KnxFileTransferClient.Lib.csproj" />
     <ProjectReference Include="..\OpenKNX.Toolbox.Lib\OpenKNX.Toolbox.Lib.csproj" />
     <ProjectReference Include="..\OpenKNX.Toolbox.Sign\OpenKNX.Toolbox.Sign.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Dialogs\ObjectSelectDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Dialogs\StringSelectDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>
