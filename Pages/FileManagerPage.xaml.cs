@@ -46,7 +46,7 @@ namespace OpenKNX.Toolbox.Pages
             {
                 return;
             }
-            DeviceConnectionModel? _conn = model.GetConnectionModel();
+            ConnectionModel? _conn = model.GetConnectionModel();
             if (_conn == null)
             {
                 return;

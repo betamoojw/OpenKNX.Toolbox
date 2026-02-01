@@ -10,6 +10,9 @@
     <Compile Update="Pages\ActionsPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Pages\ConnectionsPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Pages\DeviceManagerPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

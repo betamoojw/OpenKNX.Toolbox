@@ -23,6 +23,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <TextBlock Foreground="{DynamicResource ResourceKey=TextFillColorPrimaryBrush}" Margin="10,5" Text="Hier werden OpenKNX IP Geräte angezeigt" />
+
         <!--<Menu Foreground="White">
             --><!--<ui:MenuItem Header="Aktualisieren" Icon="{ui:SymbolIcon Symbol=ArrowClockwise24}" Command="{Binding Update}" />--><!--
             <ui:MenuItem Header="Hinzufügen" Icon="{ui:SymbolIcon Symbol=Add24}" />

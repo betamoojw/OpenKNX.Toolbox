@@ -56,6 +56,14 @@
                         <ui:InfoBadge Severity="Critical" Value="{Binding ActionsViewModel.Actions.Count}" Visibility="{Binding ActionsViewModel.Actions.Count, Converter={StaticResource ZeroToVisibilityConverter}}" />
                     </ui:NavigationViewItem.InfoBadge>
                 </ui:NavigationViewItem>
+                <ui:NavigationViewItem Content="Verbindungen" TargetPageType="{x:Type pages:ConnectionsPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Router24" />
+                    </ui:NavigationViewItem.Icon>
+                    <ui:NavigationViewItem.InfoBadge>
+                        <ui:InfoBadge Severity="Critical" Value="{Binding ConnectionsViewModel.Connections.Count}" />
+                    </ui:NavigationViewItem.InfoBadge>
+                </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
             <ui:NavigationView.PaneFooter>
                 <StackPanel>

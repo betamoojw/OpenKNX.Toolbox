@@ -45,7 +45,7 @@ namespace OpenKNX.Toolbox.Classes.Actions
         private FileActionTypes _actionType;
         private string _source = string.Empty;
         private string _destination = string.Empty;
-        private DeviceConnectionModel _connection;
+        private ConnectionModel _connection;
         private UnicastAddress _remoteAddress;
         private bool _isFile = true;
         private int _maxLength = 50;
@@ -57,7 +57,7 @@ namespace OpenKNX.Toolbox.Classes.Actions
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public FileAction(UnicastAddress remoteAddress, DeviceConnectionModel conn, string source, string destination, bool isFile, FileActionTypes actionType)
+        public FileAction(UnicastAddress remoteAddress, ConnectionModel conn, string source, string destination, bool isFile, FileActionTypes actionType)
         {
             _connection = conn;
             _source = source;
@@ -81,6 +81,11 @@ namespace OpenKNX.Toolbox.Classes.Actions
                 case FileActionTypes.Upload:
                     ActionName = "Datei hochladen";
                     Name = _destination;
+                    break;
+
+                default:
+                    ActionName = "Unbekannte Aktion";
+                    Name = "Unbekannte Aktion";
                     break;
             }
         }
@@ -118,15 +123,14 @@ namespace OpenKNX.Toolbox.Classes.Actions
 
         private IKnxConnection GetConnection()
         {
-            if(_connection.IsRoutingDevice)
+            if(!_connection.IsTunnel)
                 return KnxFactory.CreateRouting(UnicastAddress.FromString("0.0.1"));
             else
             {
-                // TODO
-                //if(_connection.Version >= 2)
-                //    return KnxFactory.CreateTunnelingTcp(_connection.RemoteEndpoint);
-                //else
-                    return KnxFactory.CreateTunnelingUdp(_connection.RemoteEndpoint);
+                if (_connection.IsTCP)
+                    return KnxFactory.CreateTunnelingTcp(_connection.EndPoint);
+                else
+                    return KnxFactory.CreateTunnelingUdp(_connection.EndPoint);
             }
         }
 

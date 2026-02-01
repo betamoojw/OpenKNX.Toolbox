@@ -8,7 +8,7 @@
     <UseWPF>true</UseWPF>
 	  <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
 	<ApplicationIcon>Assets/openknx_file.ico</ApplicationIcon>
-	  <ApplicationVersion>0.3.0.0</ApplicationVersion>
+	  <ApplicationVersion>0.3.2.0</ApplicationVersion>
 	  <Version>$(ApplicationVersion)</Version>
   </PropertyGroup>
 
@@ -31,6 +31,9 @@
 
   <ItemGroup>
     <Compile Update="Dialogs\ObjectSelectDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Dialogs\NewConnectionDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Dialogs\StringSelectDialog.xaml.cs">

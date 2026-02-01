@@ -33,6 +33,11 @@ namespace OpenKNX.Toolbox.ViewModels
             get { return ActionsViewModel.Instanz; }
         }
 
+        public ConnectionsViewModel ConnectionsViewModel
+        {
+            get { return ConnectionsViewModel.Instanz; }
+        }
+
         public DeviceManagerViewModel DeviceManagerViewModel
         {
             get { return DeviceManagerViewModel.Instanz; }

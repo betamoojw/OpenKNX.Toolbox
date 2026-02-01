@@ -47,9 +47,9 @@ namespace OpenKNX.Toolbox.ViewModels
 
         public ObservableCollection<FileModel> Items { get; set; } = new ObservableCollection<FileModel>();
 
-        private DeviceConnectionModel? _connection;
+        private ConnectionModel? _connection;
 
-        public DeviceConnectionModel? GetConnectionModel()
+        public ConnectionModel? GetConnectionModel()
         {
             return _connection;
         }
@@ -91,63 +91,10 @@ namespace OpenKNX.Toolbox.ViewModels
             } catch
             {
                 MainViewModel.Instanz.ShowError("FileManager Error", "Die angegeben Adresse ist ungültig.");
+                return;
             }
 
-            int counter = 0;
-            object lockObject = new object();
-            HashSet<string> uniquePhysicalAddresses = new HashSet<string>();
-            List<DeviceConnectionModel> gateways = new List<DeviceConnectionModel>();
-            IpKnxConnection _conn = KnxFactory.CreateTunnelingUdp(new(IPAddress.Parse("224.0.23.12"), 3671));
-
-            _conn.OnReceivedService += (IpTelegram message) =>
-            {
-                lock (lockObject)
-                {
-                    if (message.ServiceIdentifier != Kaenx.Konnect.Enums.ServiceIdentifiers.SearchResponse)
-                        return;
-                    SearchResponse? response = message as SearchResponse;
-                    if (response == null)
-                        return;
-
-                    HpaiContent? hpai = response.GetEndpoint();
-                    DeviceInfo? deviceInfo = response.GetDeviceInfo();
-                    SupportedServiceFamilies? svcFamilies = response.GetSupportedServiceFamilies();
-                    if (hpai == null || deviceInfo == null || svcFamilies == null)
-                        return;
-
-                    if (deviceInfo.Medium != Kaenx.Konnect.Enums.KnxMediums.TP1)
-                        return;
-
-                    if (uniquePhysicalAddresses.Add(deviceInfo.UnicastAddress.ToString()))
-                    {
-                        if (svcFamilies.GetServiceFamilyVersion(Kaenx.Konnect.Enums.ServiceFamilies.Tunneling) > 0)
-                        {
-                            int tunnelingVersion = svcFamilies.GetServiceFamilyVersion(Kaenx.Konnect.Enums.ServiceFamilies.Tunneling);
-                            Console.WriteLine($"{counter,2} Tunneling v{tunnelingVersion} -> {hpai.Endpoint,-20} ({deviceInfo.UnicastAddress,-9}) [{deviceInfo.FriendlyName}]");
-                            DeviceConnectionModel conn = new(hpai.Endpoint, deviceInfo.UnicastAddress, tunnelingVersion, deviceInfo.FriendlyName);
-                            gateways.Add(conn);
-                            counter++;
-                        }
-
-                        if (svcFamilies.GetServiceFamilyVersion(Kaenx.Konnect.Enums.ServiceFamilies.Routing) > 0)
-                        {
-                            int routingVersion = svcFamilies.GetServiceFamilyVersion(Kaenx.Konnect.Enums.ServiceFamilies.Routing);
-                            Console.WriteLine($"{counter,2} Routing   v{routingVersion} -> {hpai.Endpoint,-20} ({deviceInfo.UnicastAddress,-9}) [{deviceInfo.FriendlyName}]");
-                            DeviceConnectionModel conn = new(hpai.Endpoint, deviceInfo.UnicastAddress, routingVersion, deviceInfo.FriendlyName, true);
-                            gateways.Add(conn);
-                            counter++;
-                        }
-                    }
-                }
-            };
-
-            SearchRequest req = new SearchRequest(_conn.GetLocalEndpoint());
-            await _conn.SendAsync(req);
-
-            await Task.Delay(500);
-            _conn.Dispose();
-
-            ObjectSelectDialog selectDialog = new ObjectSelectDialog("Gateway Auswahl", gateways.Cast<object>().ToList());
+            ObjectSelectDialog selectDialog = new ObjectSelectDialog("Gateway Auswahl", ConnectionsViewModel.Instanz.Connections.Cast<object>().ToList());
 
             CancellationTokenSource token = new CancellationTokenSource();
             await MainViewModel.Instanz.ContentDialogService.ShowAsync(
@@ -155,7 +102,7 @@ namespace OpenKNX.Toolbox.ViewModels
                 token.Token
             );
 
-            DeviceConnectionModel? connection = selectDialog.GetSelectedItem() as DeviceConnectionModel;
+            ConnectionModel? connection = selectDialog.GetSelectedItem() as ConnectionModel;
             if (connection == null)
             {
                 return;
@@ -165,7 +112,7 @@ namespace OpenKNX.Toolbox.ViewModels
 
             Items.Clear();
 
-            _conn = KnxFactory.CreateTunnelingUdp(connection.RemoteEndpoint);
+            IpKnxConnection _conn = KnxFactory.CreateTunnelingUdp(connection.EndPoint);
             await _conn.Connect();
 
             BusDevice busDevice = new BusDevice(RemoteAddressUni.ToString(), _conn);
