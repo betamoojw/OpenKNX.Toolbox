@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenKNX.Toolbox.Sign", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnxFileTransferClient.Lib", "..\KnxFileTransferClient.Lib\KnxFileTransferClient.Lib.csproj", "{5C3AA25F-FCF8-7A57-9689-7685BA112100}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kaenx.Konnect", "..\Kaenx-Konnect\Kaenx.Konnect\Kaenx.Konnect.csproj", "{C4CFA2B3-AC68-5AEF-A9AB-F0918D43C8EE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kaenx.Konnect", "..\Kaenx-Konnect\Kaenx.Konnect.csproj", "{C4CFA2B3-AC68-5AEF-A9AB-F0918D43C8EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

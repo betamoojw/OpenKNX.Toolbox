@@ -8,6 +8,9 @@
         },
         {
             "path": "../OpenKNX.Toolbox.Sign"
+        },
+        {
+            "path": "../Kaenx-Konnect"
         }
     ]
 }

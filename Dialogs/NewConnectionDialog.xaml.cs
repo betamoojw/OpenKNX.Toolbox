@@ -41,6 +41,12 @@ namespace OpenKNX.Toolbox.Dialogs
 
         private void NewConnectionDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
+            if (args.Result != ContentDialogResult.Primary)
+            {
+                connection = null;
+                return;
+            }
+
             connection = new ConnectionModel()
             {
                 FriendlyName = ViewModel.Name,
