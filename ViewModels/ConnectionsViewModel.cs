@@ -77,7 +77,7 @@ namespace OpenKNX.Toolbox.ViewModels
                 return;
 
             string serial = BitConverter.ToString(info.SerialNumber).Replace("-", "");
-            Console.WriteLine($" -> {hpai.Endpoint,-20} ({info.UnicastAddress,-9}) [{info.FriendlyName}]");
+            Console.WriteLine($" -> {hpai.Endpoint,-22} ({info.UnicastAddress,-9}) [{info.FriendlyName}]");
 
             ConnectionModel? conn = Connections.SingleOrDefault(c => c.SerialNumber == serial && c.IsTCP == isTCP && c.IsTunnel == isTunnel);
             if (conn == null)
@@ -89,6 +89,7 @@ namespace OpenKNX.Toolbox.ViewModels
                 conn.IsTunnel = isTunnel;
                 conn.IsTCP = isTCP;
                 conn.EndPoint = hpai.Endpoint;
+                conn.UnicastAddress = info.UnicastAddress;
                 Connections.Add(conn);
             }
             else

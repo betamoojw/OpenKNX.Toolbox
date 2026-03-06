@@ -77,7 +77,7 @@
                                         <ui:SymbolIcon Symbol="ArrowDownload24" />
                                     </ui:MenuItem.Icon>
                                 </ui:MenuItem>
-                                <ui:MenuItem Header="Knxprod erstellen" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Command="{Binding CreateKnxprodCommand}" CommandParameter="{Binding .}"  Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <ui:MenuItem Header="Knxprod erstellen" Command="{Binding CreateKnxprodCommand}" CommandParameter="{Binding .}"  Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <ui:MenuItem.Icon>
                                         <ui:SymbolIcon Symbol="Box24" />
                                     </ui:MenuItem.Icon>

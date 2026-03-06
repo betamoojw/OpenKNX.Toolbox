@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Kaenx.Konnect.Addresses;
 
 namespace OpenKNX.Toolbox.Models
 {
@@ -12,6 +13,7 @@ namespace OpenKNX.Toolbox.Models
         public string SerialNumber { get; set; } = "unknown";
         public string FriendlyName { get; set; } = "unknown";
         public IPEndPoint EndPoint { get; set; } = new IPEndPoint(IPAddress.Loopback, 0);
+        public UnicastAddress? UnicastAddress { get; set; } = null;
         public int Counter { get; set; } = 2;
         public bool IsManuallyAdded { get; set; } = false;
         public bool IsTunnel { get; set; } = false;
@@ -20,7 +22,7 @@ namespace OpenKNX.Toolbox.Models
         public override string ToString()
         {
             string prefix = $"{(IsTunnel ? "Tunnel " : "Routing")} [{(IsTCP ? "TCP" : "UDP")}]";
-            return $"{prefix} {FriendlyName} ({EndPoint.Address}:{EndPoint.Port}) {(IsManuallyAdded ? "[MAN]" : "")}";
+            return $"{prefix} {FriendlyName} {UnicastAddress?.ToString() ?? "??.??.???"} ({EndPoint.Address}:{EndPoint.Port}) {(IsManuallyAdded ? "[MAN]" : "")}";
         }
     }
 }
