@@ -1,0 +1,21 @@
+﻿<ui:ContentDialog x:Class="OpenKNX.Toolbox.Dialogs.StringSelectDialog"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:OpenKNX.Toolbox.Dialogs"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:conv="clr-namespace:OpenKNX.Toolbox.Converter"
+      xmlns:properties="clr-namespace:OpenKNX.Toolbox.Properties"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="{Binding Title}"
+      IsPrimaryButtonEnabled="{Binding CanContinue}"
+      PrimaryButtonText="{x:Static properties:Resources.Select}"
+      CloseButtonText="{x:Static properties:Resources.Cancel}">
+    <ui:ContentDialog.Resources>
+        <Style BasedOn="{StaticResource {x:Type ui:ContentDialog}}" TargetType="{x:Type local:StringSelectDialog}" />
+    </ui:ContentDialog.Resources>
+
+    <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" />
+</ui:ContentDialog>

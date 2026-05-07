@@ -1,0 +1,125 @@
+﻿<Page x:Class="OpenKNX.Toolbox.Pages.FirmwareManagerPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:OpenKNX.Toolbox.Pages"
+      xmlns:vm="clr-namespace:OpenKNX.Toolbox.ViewModels"
+      xmlns:models="clr-namespace:OpenKNX.Toolbox.Models"
+      xmlns:libmodels="clr-namespace:OpenKNX.Toolbox.Lib.Models;assembly=OpenKNX.Toolbox.Lib"
+      xmlns:conv="clr-namespace:OpenKNX.Toolbox.Converter"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:properties="clr-namespace:OpenKNX.Toolbox.Properties"
+      mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="FirmwareManagerPage"
+      x:Name="PageControl">
+    <Page.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <conv:BoolToFloatConverter x:Key="BoolToOpacityConverter" TrueValue="1" FalseValue="0.5" />
+        <conv:NullOrEmptyToVisibilityConverter x:Key="NullOrEmptyToVisibilityConverter" />
+        <conv:NullOrEmptyToBoolConverter x:Key="NullOrEmptyToBoolConverter" />
+        <conv:NullToBoolConverter x:Key="NullToBoolConverter" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ui:Button Command="{Binding ReloadFirmwaresCommand}" ToolTip="{x:Static properties:Resources.ReloadList}" Background="{DynamicResource AccentTextFillColorPrimaryBrush}" Margin="1" VerticalAlignment="Stretch">
+            <ui:Button.Icon>
+                <ui:SymbolIcon Symbol="ArrowClockwise24" />
+            </ui:Button.Icon>
+        </ui:Button>
+
+        <ui:Button Grid.Column="1" Command="{Binding OpenHelpCommand}" CommandParameter="{Binding SelectedItem, ElementName=AppList}" ToolTip="{x:Static properties:Resources.OpenHelpThread}" Margin="1" VerticalAlignment="Stretch" IsEnabled="{Binding SelectedItem.HelpThread, ElementName=AppList, Converter={StaticResource NullOrEmptyToBoolConverter}, ConverterParameter=true, FallbackValue=false}">
+            <ui:Button.Icon>
+                <ui:SymbolIcon Symbol="ChatHelp24" />
+            </ui:Button.Icon>
+        </ui:Button>
+
+        <ui:Button Grid.Column="2" Command="{Binding OpenRepoCommand}" CommandParameter="{Binding SelectedItem, ElementName=AppList}" ToolTip="{x:Static properties:Resources.OpenRepository}" Margin="1" VerticalAlignment="Stretch" IsEnabled="{Binding SelectedItem, ElementName=AppList, Converter={StaticResource NullToBoolConverter}, ConverterParameter=true, FallbackValue=false}">
+            <ui:Button.Icon>
+                <ui:SymbolIcon Symbol="Globe24" />
+            </ui:Button.Icon>
+        </ui:Button>
+
+        <ComboBox Grid.Column="3" x:Name="AppList" ItemsSource="{Binding Applications}" SelectedValue="{Binding SelectedApplication}" SelectedValuePath="AppId" Margin="1">
+            <ComboBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type libmodels:Application}">
+                    <TextBlock>
+                        <Run Text="{Binding Name}" />
+                        <Run Text=" - " />
+                        <Run Text="{Binding Label}" />
+                    </TextBlock>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <ui:TextBlock Grid.Row="1" Grid.ColumnSpan="5" Text="{Binding SelectedItem.Description, ElementName=AppList}" Visibility="{Binding SelectedItem.Description, ElementName=AppList, Converter={StaticResource NullOrEmptyToVisibilityConverter}}" FontSize="16" Margin="5,10,0,5" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+
+        <ui:ListView Grid.Row="2" Grid.ColumnSpan="5" ItemsSource="{Binding SelectedItem.Releases, ElementName=AppList}">
+            <ui:ListView.ItemTemplate>
+                <DataTemplate DataType="{x:Type libmodels:Application}">
+                    <Grid Margin="10,5" Opacity="{Binding IsLocalAvailable, Converter={StaticResource BoolToOpacityConverter}}">
+                        <Grid.ContextMenu>
+                            <ContextMenu>
+                                <ui:MenuItem Header="{x:Static properties:Resources.Download}" Command="{Binding DownloadReleaseCommand}" Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=true}">
+                                    <ui:MenuItem.Icon>
+                                        <ui:SymbolIcon Symbol="ArrowDownload24" />
+                                    </ui:MenuItem.Icon>
+                                </ui:MenuItem>
+                                <ui:MenuItem Header="{x:Static properties:Resources.CreateKnxprod}" Command="{Binding CreateKnxprodCommand}" CommandParameter="{Binding .}"  Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <ui:MenuItem.Icon>
+                                        <ui:SymbolIcon Symbol="Box24" />
+                                    </ui:MenuItem.Icon>
+                                </ui:MenuItem>
+                                <ui:MenuItem x:Name="FlashMenuItem" Header="{x:Static properties:Resources.FlashToDevice}" ItemsSource="{Binding ContentModel.Products}" Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <ui:MenuItem.Icon>
+                                        <ui:SymbolIcon Symbol="SendCopy24" />
+                                    </ui:MenuItem.Icon>
+                                    <MenuItem.ItemContainerStyle>
+                                        <Style TargetType="MenuItem">
+                                            <Setter Property="Command" Value="{Binding DataContext.FlashReleaseCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Page}}" />
+                                            <Setter Property="CommandParameter" Value="{Binding .}" />
+                                            <Setter Property="Header" Value="{Binding Name}" />
+                                        </Style>
+                                    </MenuItem.ItemContainerStyle>
+                                </ui:MenuItem>
+                                <ui:MenuItem Header="{x:Static properties:Resources.OpenReleaseNotes}" Command="{Binding OpenReleaseNotesCommand}">
+                                    <ui:MenuItem.Icon>
+                                        <ui:SymbolIcon Symbol="Notepad24" />
+                                    </ui:MenuItem.Icon>
+                                </ui:MenuItem>
+                                <ui:MenuItem Header="{x:Static properties:Resources.Delete}" Foreground="IndianRed" Command="{Binding DeleteReleaseCommand}" Visibility="{Binding IsLocalAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <ui:MenuItem.Icon>
+                                        <ui:SymbolIcon Symbol="Delete24" />
+                                    </ui:MenuItem.Icon>
+                                </ui:MenuItem>
+                            </ContextMenu>
+                        </Grid.ContextMenu>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <ui:TextBlock Text="{Binding VersionString}" FontSize="20" />
+                            <ui:TextBlock Text="{Binding Name}" FontSize="11" />
+                        </StackPanel>
+                        <ui:TextBlock Text="PreRelease" FontSize="20" Grid.Column="1" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Visibility="{Binding IsPrerelease, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    </Grid>
+                </DataTemplate>
+            </ui:ListView.ItemTemplate>
+        </ui:ListView>
+    </Grid>
+</Page>

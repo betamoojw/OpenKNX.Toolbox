@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+	  <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+	<ApplicationIcon>Assets/openknx_file.ico</ApplicationIcon>
+	  <ApplicationVersion>0.3.2.0</ApplicationVersion>
+	  <Version>$(ApplicationVersion)</Version>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<Resource Include="Assets\**" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Tmds.MDns" Version="0.8.0" />
+    <PackageReference Include="wpf-ui" Version="4.0.3" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <DefaultItemExcludes>$(DefaultItemExcludes);OpenKNX.Toolbox.Lib\**;OpenKNX.Toolbox.Sign\**;Kaenx-Konnect\**;KnxFileTransferClient.Lib\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kaenx-Konnect\Kaenx.Konnect.csproj" />
+    <ProjectReference Include="..\KnxFileTransferClient.Lib\KnxFileTransferClient.Lib.csproj" />
+    <ProjectReference Include="..\OpenKNX.Toolbox.Lib\OpenKNX.Toolbox.Lib.csproj" />
+    <ProjectReference Include="..\OpenKNX.Toolbox.Sign\OpenKNX.Toolbox.Sign.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Dialogs\ObjectSelectDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Dialogs\NewConnectionDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Dialogs\StringSelectDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+</Project>

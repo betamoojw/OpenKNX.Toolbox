@@ -1,0 +1,119 @@
+﻿<ui:FluentWindow x:Class="OpenKNX.Toolbox.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OpenKNX.Toolbox"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:vm="clr-namespace:OpenKNX.Toolbox.ViewModels"
+        xmlns:pages="clr-namespace:OpenKNX.Toolbox.Pages"
+        xmlns:conv="clr-namespace:OpenKNX.Toolbox.Converter"
+        xmlns:properties="clr-namespace:OpenKNX.Toolbox.Properties"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="1000">
+    <Window.Resources>
+        <conv:ZeroToVisibilityConverter x:Key="ZeroToVisibilityConverter" />
+        <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+    </Window.Resources>
+    
+    
+   <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Title="{Binding Title}">
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="/Assets/openknx_file.ico" />
+            </ui:TitleBar.Icon>
+        </ui:TitleBar>
+
+        <ui:NavigationView x:Name="RootNavigationView" Grid.Row="1" IsBackButtonVisible="Collapsed">
+            <ui:NavigationView.MenuItems>
+                <ui:NavigationViewItem Content="{x:Static properties:Resources.DeviceManager}" TargetPageType="{x:Type pages:DeviceManagerPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="MapDrive24" />
+                    </ui:NavigationViewItem.Icon>
+                    <ui:NavigationViewItem.InfoBadge>
+                        <ui:InfoBadge Severity="Critical" Value="{Binding DeviceManagerViewModel.UpdatesAvailable}" Visibility="{Binding DeviceManagerViewModel.UpdatesAvailable, Converter={StaticResource ZeroToVisibilityConverter}}" />
+                    </ui:NavigationViewItem.InfoBadge>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem Content="{x:Static properties:Resources.FileManager}" TargetPageType="{x:Type pages:FileManagerPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Document24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem Content="{x:Static properties:Resources.FirmwareManager}" TargetPageType="{x:Type pages:FirmwareManagerPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="ClipboardPulse24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem Content="{x:Static properties:Resources.ScheduledActions}" TargetPageType="{x:Type pages:ActionsPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="ReceiptPlay24" />
+                    </ui:NavigationViewItem.Icon>
+                    <ui:NavigationViewItem.InfoBadge>
+                        <ui:InfoBadge Severity="Critical" Value="{Binding ActionsViewModel.Actions.Count}" Visibility="{Binding ActionsViewModel.Actions.Count, Converter={StaticResource ZeroToVisibilityConverter}}" />
+                    </ui:NavigationViewItem.InfoBadge>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem Content="{x:Static properties:Resources.Connections}" TargetPageType="{x:Type pages:ConnectionsPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Router24" />
+                    </ui:NavigationViewItem.Icon>
+                    <ui:NavigationViewItem.InfoBadge>
+                        <ui:InfoBadge Severity="Critical" Value="{Binding ConnectionsViewModel.Connections.Count}" />
+                    </ui:NavigationViewItem.InfoBadge>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.MenuItems>
+            <ui:NavigationView.PaneFooter>
+                <StackPanel>
+                    <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource TextFillColorTertiaryBrush}" Visibility="{Binding DeviceManagerViewModel.SelectedDevice, Converter={StaticResource NullToVisibilityConverter}}">
+                        <StackPanel Margin="10,5">
+                            <ui:TextBlock Text="{x:Static properties:Resources.SelectedDevice}" FontWeight="Bold" />
+                            <ui:TextBlock>
+                                <Run Text="{Binding DeviceManagerViewModel.SelectedDevice.Address}" />
+                                <Run Text="{Binding DeviceManagerViewModel.SelectedDevice.FirmwareName}" />
+                            </ui:TextBlock>
+                            <ui:TextBlock>
+                                <Run Text="{Binding DeviceManagerViewModel.SelectedDevice.AppId}" />
+                                <Run Text="{Binding DeviceManagerViewModel.SelectedDevice.FirmwareVersionString}" />
+                            </ui:TextBlock>
+                        </StackPanel>
+                    </Border>
+                    <Grid Visibility="{Binding ActionsViewModel.CurrentAction, Converter={StaticResource NullToVisibilityConverter}}">
+                        <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource TextFillColorTertiaryBrush}">
+                            <StackPanel Margin="10,5">
+                                <ui:TextBlock Text="{x:Static properties:Resources.CurrentAction}" FontWeight="Bold" />
+                                <ui:TextBlock Text="{Binding ActionsViewModel.CurrentAction.ActionName}" />
+                                <ui:TextBlock Text="{Binding ActionsViewModel.CurrentAction.Name}" />
+                                <ProgressBar Value="{Binding ActionsViewModel.CurrentAction.Progress}" IsIndeterminate="{Binding ActionsViewModel.CurrentAction.IsIndeterminate}" Maximum="100" />
+                            </StackPanel>
+                        </Border>
+                        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top">
+                            <ui:Button Command="{Binding ActionsViewModel.CancelActionCommand}" Background="IndianRed" Margin="1" VerticalAlignment="Stretch">
+                                <ui:Button.Icon>
+                                    <ui:SymbolIcon Symbol="Delete24" />
+                                </ui:Button.Icon>
+                            </ui:Button>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </ui:NavigationView.PaneFooter>
+            <ui:NavigationView.FooterMenuItems>
+                <ui:NavigationViewItem Content="{x:Static properties:Resources.Settings}" TargetPageType="{x:Type pages:SettingsPage}" >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Settings24" />
+                    </ui:NavigationViewItem.Icon>
+                    <ui:NavigationViewItem.InfoBadge>
+                        <ui:InfoBadge Severity="Critical" Height="15" Width="15" />
+                    </ui:NavigationViewItem.InfoBadge>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.FooterMenuItems>
+
+        </ui:NavigationView>
+
+        <ui:SnackbarPresenter x:Name="MainSnackbarPresenter" Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom" />
+        <ContentPresenter x:Name="MainContentPresenter" Grid.Row="1" />
+    </Grid>
+</ui:FluentWindow>
